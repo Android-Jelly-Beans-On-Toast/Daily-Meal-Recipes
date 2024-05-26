@@ -32,17 +32,17 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.main_menu, menu);
-        return super.onCreateOptionsMenu(menu);
+        return true;
     }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch(item.getItemId()){
-            case 1:
-
-        }
-        Intent intent = new Intent(this, SettingsActivity.class);
-        startActivity(intent);
-        return super.onOptionsItemSelected(item);
-    }
+//
+//    @Override
+//    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+////        switch(item.getItemId()){
+////            case 1:
+////
+////        }
+//        Intent intent = new Intent(this, SettingsActivity.class);
+//        startActivity(intent);
+//        return super.onOptionsItemSelected(item);
+//    }
 }

@@ -22,7 +22,18 @@
         <TableRow
             android:layout_width="match_parent"
             android:layout_height="324dp"
-            android:layout_weight="1"/>
+            android:layout_weight="1">
+
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="?attr/colorPrimary"
+                android:minHeight="?attr/actionBarSize"
+                android:theme="?attr/actionBarTheme" />
+        </TableRow>
 
         <TableRow
             android:layout_width="match_parent"
@@ -33,7 +44,7 @@
                 android:id="@+id/button5"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Button" />
+                android:text="Buttonb" />
         </TableRow>
 
         <TableRow
