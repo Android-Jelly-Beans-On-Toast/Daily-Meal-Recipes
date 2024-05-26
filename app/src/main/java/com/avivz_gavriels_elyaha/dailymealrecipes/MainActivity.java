@@ -2,6 +2,7 @@ package com.avivz_gavriels_elyaha.dailymealrecipes;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -30,10 +31,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreateOptionsMenu(menu);
         MenuItem menuItem1 = menu.add("Settings");
         MenuItem menuItem2 = menu.add("Exit");
-        menuItem2.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+        menuItem1.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                Log.d("hello","Pog")
+                Log.d("hello","setteng clicked!");
                 return true;
             }
         });
