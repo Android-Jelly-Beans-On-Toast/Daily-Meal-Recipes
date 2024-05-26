@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Daily Meal Recipes</string>
+    <string name="settings_menu_item">Settings</string>
 </resources>
