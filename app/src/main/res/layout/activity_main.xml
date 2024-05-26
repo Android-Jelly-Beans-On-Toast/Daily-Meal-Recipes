@@ -22,29 +22,43 @@
         <TableRow
             android:layout_width="match_parent"
             android:layout_height="324dp"
-            android:layout_weight="1">
-
-
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="?attr/colorPrimary"
-                android:minHeight="?attr/actionBarSize"
-                android:theme="?attr/actionBarTheme" />
-        </TableRow>
+            android:layout_weight="1"/>
 
         <TableRow
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:gravity="center_horizontal|center_vertical">
 
-            <Button
-                android:id="@+id/button5"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Buttonb" />
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="346dp"
+                android:orientation="vertical">
+
+                <ImageButton
+                    android:id="@+id/imageButton"
+                    android:layout_width="307dp"
+                    android:layout_height="292dp"
+                    android:adjustViewBounds="true"
+                    android:backgroundTint="#03A9F4"
+                    android:scaleType="fitCenter"
+                    android:scrollbarSize="4dp"
+                    app:srcCompat="@android:drawable/ic_menu_camera"
+                    tools:srcCompat="@android:drawable/ic_menu_camera"
+                    android:layout_weight="1"
+                    />
+
+                <SearchView
+                    android:layout_width="match_parent"
+                    android:layout_height="72dp"
+                    android:layout_weight="5"
+                    android:autofillHints="i want to eat..."
+                    android:background="#CBBEE2FF" />
+
+
+            </TableLayout>
+
+
         </TableRow>
 
         <TableRow

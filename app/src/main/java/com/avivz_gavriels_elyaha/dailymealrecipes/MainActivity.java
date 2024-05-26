@@ -2,20 +2,16 @@ package com.avivz_gavriels_elyaha.dailymealrecipes;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import androidx.activity.EdgeToEdge;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 public class MainActivity extends AppCompatActivity {
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,23 +22,21 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.main_menu, menu);
+        super.onCreateOptionsMenu(menu);
+        MenuItem menuItem1 = menu.add("Settings");
+        MenuItem menuItem2 = menu.add("Exit");
+        menuItem2.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                Log.d("hello","Pog")
+                return true;
+            }
+        });
         return true;
     }
-//
-//    @Override
-//    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-////        switch(item.getItemId()){
-////            case 1:
-////
-////        }
-//        Intent intent = new Intent(this, SettingsActivity.class);
-//        startActivity(intent);
-//        return super.onOptionsItemSelected(item);
-//    }
 }
