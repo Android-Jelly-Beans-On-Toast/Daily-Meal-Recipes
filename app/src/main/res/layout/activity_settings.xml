@@ -93,11 +93,12 @@
                 android:layout_height="wrap_content"
                 android:text="Daily notification time" />
 
-            <ImageButton
+            <Button
                 android:id="@+id/timePicker"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:srcCompat="@android:drawable/ic_menu_compass" />
+                android:drawableLeft="@drawable/timer_icon"
+                android:text="Button" />
 
         </TableRow>
 
