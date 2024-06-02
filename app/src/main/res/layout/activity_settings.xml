@@ -46,9 +46,10 @@
             android:layout_height="56dp">
 
             <Switch
-                android:id="@+id/switch1"
+                android:id="@+id/enableNotificationSwitch"
                 android:layout_width="wrap_content"
                 android:layout_height="48dp"
+                android:drawableLeft="@android:drawable/ic_popup_reminder"
                 android:text="Enable notification" />
         </TableRow>
 
