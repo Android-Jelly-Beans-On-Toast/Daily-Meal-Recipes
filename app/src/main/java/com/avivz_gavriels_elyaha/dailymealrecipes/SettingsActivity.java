@@ -28,8 +28,7 @@ public class SettingsActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        AutoCompleteTextView recentHistoryAdapter;
-        recentHistoryAdapter = findViewById(R.id.recentHistoryDropDown);
+        AutoCompleteTextView recentHistoryAdapter = findViewById(R.id.recentHistoryDropDown);
         recentHistoryAdapter.setText(this.recentHistoryOptions[0]);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, recentHistoryOptions);
         recentHistoryAdapter.setAdapter(adapter);
@@ -40,8 +39,8 @@ public class SettingsActivity extends AppCompatActivity {
                 Toast.makeText(SettingsActivity.this, "Selected: " + item, Toast.LENGTH_SHORT).show();
             }
         });
-        Switch notificationSwitch;
-        notificationSwitch = findViewById(R.id.enableNotificationSwitch);
+
+        Switch notificationSwitch = findViewById(R.id.enableNotificationSwitch);
         notificationSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
