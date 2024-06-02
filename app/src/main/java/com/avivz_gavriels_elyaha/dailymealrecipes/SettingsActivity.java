@@ -8,7 +8,14 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AutoCompleteTextView;
+import android.widget.ArrayAdapter;
+import android.widget.Toast;
+
 public class SettingsActivity extends AppCompatActivity {
+    private String[] recentHistoryOptions = {"5", "10", "15", "All"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,6 +26,18 @@ public class SettingsActivity extends AppCompatActivity {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
+        });
+        AutoCompleteTextView recentHistoryAdapter;
+        recentHistoryAdapter = findViewById(R.id.recentHistoryDropDown);
+        recentHistoryAdapter.setText(this.recentHistoryOptions[0]);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, recentHistoryOptions);
+        recentHistoryAdapter.setAdapter(adapter);
+        recentHistoryAdapter.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String item = parent.getItemAtPosition(position).toString();
+                Toast.makeText(SettingsActivity.this, "Selected: " + item, Toast.LENGTH_SHORT).show();
+            }
         });
     }
 }

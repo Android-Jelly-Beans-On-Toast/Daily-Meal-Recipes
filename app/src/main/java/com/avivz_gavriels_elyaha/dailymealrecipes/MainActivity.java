@@ -31,10 +31,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreateOptionsMenu(menu);
         MenuItem menuItem1 = menu.add("Settings");
         MenuItem menuItem2 = menu.add("Exit");
+        MainActivity that = this;
         menuItem1.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 Log.d("hello","setteng clicked!");
+                Intent intent = new Intent(that, SettingsActivity.class);
+                startActivity(intent);
                 return true;
             }
         });
