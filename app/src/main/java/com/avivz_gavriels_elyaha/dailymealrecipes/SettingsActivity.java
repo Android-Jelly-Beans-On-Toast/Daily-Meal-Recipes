@@ -25,6 +25,8 @@ public class SettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
+        setTitle("Settings");
+
         SettingsActivity that = this;
 
         sp = getSharedPreferences("settings", MODE_PRIVATE);
@@ -59,6 +61,33 @@ public class SettingsActivity extends AppCompatActivity {
 
             }
         });
+
+        // daily notification time button
+        Button timePicker = findViewById(R.id.timePicker);
+        // set time picker text from shared preferences
+        setTimePickerText(timePicker, sp.getInt("timerHour", 0), sp.getInt("timerMinute", 0));
+
+        timePicker.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("at onClick", "my log");
+                TimePickerDialog clockPicker = new TimePickerDialog(that, new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                        SharedPreferences.Editor editor = sp.edit();
+
+
+                        editor.putInt("timerHour", hourOfDay);
+                        editor.putInt("timerMinute", minute);
+                        editor.apply();
+
+                        setTimePickerText(timePicker, hourOfDay, minute);
+                    }
+                }, 0, 0, true);
+                clockPicker.show();
+            }
+        });
+
         // enable notification switch
         Switch notificationSwitch = findViewById(R.id.enableNotificationSwitch);
         notificationSwitch.setChecked(sp.getBoolean("notification", false));
@@ -107,29 +136,18 @@ public class SettingsActivity extends AppCompatActivity {
                 editor.apply();
             }
         });
-        Button timePicker = findViewById(R.id.timePicker);
-        timePicker.setText(sp.getInt("timerHour", 0) + ":" + sp.getInt("timerMinute", 0));
+    }
 
-        timePicker.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d("at onClick", "my log");
-                TimePickerDialog clockPicker = new TimePickerDialog(that, new TimePickerDialog.OnTimeSetListener() {
-                    @Override
-                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                        SharedPreferences.Editor editor = sp.edit();
+    private void setTimePickerText(Button timePicker, int hourOfDay, int minute) {
+        // pad with 0s if needed
+        String paddedHour = hourOfDay < 10 ? "0" + hourOfDay : "" + hourOfDay;
+        String paddedMinute = minute < 10 ? "0" + minute : "" + minute;
+        String AMPM = hourOfDay < 12 ? "AM" : "PM";
 
+        if (hourOfDay != 0 || minute != 0) {
 
-                        editor.putInt("timerHour", hourOfDay);
-                        editor.putInt("timerMinute", minute);
-                        editor.apply();
-
-                        timePicker.setText(sp.getInt("timerHour", 0) + ":" + sp.getInt("timerMinute", 0));
-                    }
-                }, 0, 0, true);
-                clockPicker.show();
-            }
-        });
+            timePicker.setText(paddedHour + ":" + paddedMinute + " " + AMPM);
+        }
     }
 }
 
