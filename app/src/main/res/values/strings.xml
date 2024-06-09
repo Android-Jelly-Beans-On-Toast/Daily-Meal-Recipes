@@ -1,3 +1,19 @@
 <resources>
     <string name="app_name">Daily Meal Recipes</string>
+    <string name="settings_menu_item">Settings</string>
+    <string name="exit_menu_item">Exit</string>
+
+    <!-- settings strings -->
+    <string name="daily_notification_time">Daily Notification Time</string>
+    <string name="enable_notifications">Enable Notifications</string>
+    <string name="recipe_category">Recipe Category</string>
+    <string name="num_recent_recipes"># Recent Recipes</string>
+    <string name="kosher">Kosher</string>
+    <string name="quick">Quick</string>
+    <string name="low_calories">Low Calories</string>
+    <string name="recipes_criteria">Recipes Criteria</string>
+    <string name="general">General</string>
+    <string name="pick_time">Pick Time</string>
+    <string name="five">5</string>
+    <string name="breakfast">Breakfast</string>
 </resources>
