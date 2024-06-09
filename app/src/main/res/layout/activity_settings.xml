@@ -115,7 +115,7 @@
                 android:textSize="16sp"
                 app:drawableLeftCompat="@drawable/notification_icon" />
 
-            <Switch
+            <com.google.android.material.switchmaterial.SwitchMaterial
                 android:id="@+id/enableNotificationSwitch"
                 android:layout_width="wrap_content"
                 android:layout_height="48dp"
@@ -191,7 +191,7 @@
                 android:textSize="16sp"
                 app:drawableLeftCompat="@drawable/kosher_icon" />
 
-            <Switch
+            <com.google.android.material.switchmaterial.SwitchMaterial
                 android:id="@+id/kosherSwitch"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -215,7 +215,7 @@
                 android:textSize="16sp"
                 app:drawableLeftCompat="@drawable/quick_icon" />
 
-            <Switch
+            <com.google.android.material.switchmaterial.SwitchMaterial
                 android:id="@+id/quickSwitch"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -239,7 +239,7 @@
                 android:textSize="16sp"
                 app:drawableLeftCompat="@drawable/low_calories_icon" />
 
-            <Switch
+            <com.google.android.material.switchmaterial.SwitchMaterial
                 android:id="@+id/lowCaloriesSwitch"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

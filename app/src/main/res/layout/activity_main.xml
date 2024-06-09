@@ -22,7 +22,7 @@
         <TableRow
             android:layout_width="match_parent"
             android:layout_height="324dp"
-            android:layout_weight="1"/>
+            android:layout_weight="1" />
 
         <TableRow
             android:layout_width="match_parent"
@@ -36,7 +36,7 @@
                 android:orientation="vertical">
 
                 <ImageButton
-                    android:id="@+id/imageButton"
+                    android:id="@+id/buttonCamera"
                     android:layout_width="307dp"
                     android:layout_height="292dp"
                     android:adjustViewBounds="true"
@@ -45,8 +45,7 @@
                     android:scrollbarSize="4dp"
                     app:srcCompat="@android:drawable/ic_menu_camera"
                     tools:srcCompat="@android:drawable/ic_menu_camera"
-                    android:layout_weight="1"
-                    />
+                    android:layout_weight="1" />
 
                 <SearchView
                     android:layout_width="match_parent"
