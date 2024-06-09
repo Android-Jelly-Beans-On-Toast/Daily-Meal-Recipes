@@ -16,4 +16,7 @@
     <string name="pick_time">Pick Time</string>
     <string name="five">5</string>
     <string name="breakfast">Breakfast</string>
+    <!-- splash screen strings -->
+    <string name="title_activity_splash">SplashActivity</string>
+    <string name="logo_description">Logo of the Food Recommendation App</string>
 </resources>
