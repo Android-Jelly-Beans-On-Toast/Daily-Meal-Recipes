@@ -7,6 +7,16 @@ android {
     namespace 'com.avivz_gavriels_elyaha.dailymealrecipes'
     compileSdk 34
 
+    buildFeatures {
+        buildConfig = true
+    }
+
+    packagingOptions {
+        resources {
+            excludes += '/META-INF/DEPENDENCIES'
+        }
+    }
+
     defaultConfig {
         applicationId "com.avivz_gavriels_elyaha.dailymealrecipes"
         minSdk 26
@@ -18,6 +28,8 @@ android {
         vectorDrawables {
             useSupportLibrary true
         }
+        buildConfigField("String", "API_KEY", "\"${project.findProperty("apiKey")}\"")
+
     }
 
     buildTypes {
@@ -66,4 +78,7 @@ dependencies {
     androidTestImplementation libs.ui.test.junit4
     debugImplementation libs.ui.tooling
     debugImplementation libs.ui.test.manifest
+    implementation libs.generativeai.v010
+    implementation libs.google.api.client.android
+    implementation libs.google.http.client.gson
 }
