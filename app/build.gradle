@@ -6,8 +6,15 @@ plugins {
 android {
     namespace 'com.avivz_gavriels_elyaha.dailymealrecipes'
     compileSdk 34
+
     buildFeatures {
         buildConfig = true
+    }
+
+    packagingOptions {
+        resources {
+            excludes += '/META-INF/DEPENDENCIES'
+        }
     }
 
     defaultConfig {
@@ -22,6 +29,7 @@ android {
             useSupportLibrary true
         }
         buildConfigField("String", "API_KEY", "\"${project.findProperty("apiKey")}\"")
+
     }
 
     buildTypes {
