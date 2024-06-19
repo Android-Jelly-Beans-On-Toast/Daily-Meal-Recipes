@@ -31,14 +31,20 @@ public class MainActivity extends AppCompatActivity {
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
                 if (result.getResultCode() == RESULT_OK) {
-                    // Image captured successfully
-                    // Process the captured image here
+                    // image captured successfully, process the captured image here
                     if (result.getData() != null && result.getData().getExtras() != null) {
                         Bitmap capturedImage = (Bitmap) result.getData().getExtras().get("data");
+                        // TODO: check what to do with the captured image
                         that.geminiResult = that.sendToGemini(capturedImage);
+
+                        // launch RecipeActivity and send the captured image there
+                        Intent intent = new Intent(that, RecipeActivity.class);
+                        intent.putExtra("capturedImage", capturedImage);
+                        startActivity(intent);
+
                     }
                 } else {
-                    // Image capture failed
+                    // image capture failed
                     that.geminiResult = "";
                 }
             }
