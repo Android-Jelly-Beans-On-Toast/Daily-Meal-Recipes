@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- toolbar -->
+    <style name="Widget.DailyMealRecipes.Toolbar" parent="Widget.Material3.Toolbar">
+        <item name="android:background">@color/toolbar_color</item>
+    </style>
+
+    <!-- options menu -->
+    <style name="MyOverflowButtonStyle" parent="Widget.AppCompat.ActionButton.Overflow">
+        <item name="android:src">@drawable/options_image</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+</resources>

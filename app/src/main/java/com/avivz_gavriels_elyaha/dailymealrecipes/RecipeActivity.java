@@ -2,6 +2,7 @@ package com.avivz_gavriels_elyaha.dailymealrecipes;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -12,12 +13,16 @@ public class RecipeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe);
 
+        setTitle("Recipe from image");
+
         // retrieve captured image from extras as bitmap
         Bitmap capturedImage = getIntent().getParcelableExtra("capturedImage");
 
-        // TODO: display captured image in ImageView
-//        ImageView capturedImageView = findViewById(R.id.capturedImageView);
-//        capturedImageView.setImageBitmap(capturedImage);
+        ImageView capturedImageView = findViewById(R.id.capturedImage);
+        capturedImageView.setImageBitmap(capturedImage);
 
     }
+
+    // take care of parallex effect on scroll down from image
+
 }
