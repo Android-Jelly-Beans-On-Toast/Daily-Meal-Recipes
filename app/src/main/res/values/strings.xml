@@ -1,9 +1,10 @@
 <resources>
+    <!-- global -->
     <string name="app_name">Daily Meal Recipes</string>
     <string name="settings_menu_item">Settings</string>
     <string name="exit_menu_item">Exit</string>
     <string name="time_format">%1$s:%2$s %3$s</string>
-    <!-- settings strings -->
+    <!-- settings -->
     <string name="daily_notification_time">Daily Notification Time</string>
     <string name="enable_notifications">Enable Notifications</string>
     <string name="recipe_category">Recipe Category</string>
@@ -16,7 +17,12 @@
     <string name="pick_time">Pick Time</string>
     <string name="five">5</string>
     <string name="breakfast">Breakfast</string>
-    <!-- splash screen strings -->
+    <!-- splash screen -->
     <string name="title_activity_splash">SplashActivity</string>
     <string name="logo_description">Food Recommendation App</string>
+    <!-- recipe screen -->
+    <string name="recipe_ingredients">Ingredients</string>
+    <string name="recipe_recipe">Recipe</string>
+    <string name="meal_image">Meal Image</string>
+
 </resources>

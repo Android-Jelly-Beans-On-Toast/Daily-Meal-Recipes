@@ -7,7 +7,7 @@ import android.os.Looper;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-public class Splash_Activity extends AppCompatActivity {
+public class SplashActivity extends AppCompatActivity {
 
     private static final long SPLASH_SCREEN_DURATION = 3000; // 3 sec
 
@@ -18,7 +18,7 @@ public class Splash_Activity extends AppCompatActivity {
 
         //The logic of the splash screen - a delay and then the opening of the main activity
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            Intent intent = new Intent(Splash_Activity.this, MainActivity.class);
+            Intent intent = new Intent(SplashActivity.this, MainActivity.class);
             startActivity(intent);
             finish(); //Close the splash activity so it doesn't return if the user clicks the Back button
         }, SPLASH_SCREEN_DURATION);
