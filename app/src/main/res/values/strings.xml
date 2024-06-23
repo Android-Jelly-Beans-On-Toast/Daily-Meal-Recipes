@@ -24,8 +24,11 @@
     <string name="recipe_ingredients">Ingredients</string>
     <string name="recipe_recipe">Recipe</string>
     <string name="meal_image">Meal Image</string>
+    <string name="recipe_calories">Calories:</string>
+    <string name="see_your_captured_image">See your captured image</string>
     <!-- loading layout -->
     <string name="loading">Loading, please wait…</string>
-
+    <!-- prompt values -->
+    <string name="promptForGemini">generate a %s recipe for the meal in the image, estimate the calories in your recipe. format your response in a json format, the key names will be "ingredients" for the ingredients, and "steps" for the steps to make the meal, "title" for the name of the meal, and "calories" for the estimated calories of the meal.</string>
 
 </resources>
