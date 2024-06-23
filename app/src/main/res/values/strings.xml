@@ -24,5 +24,8 @@
     <string name="recipe_ingredients">Ingredients</string>
     <string name="recipe_recipe">Recipe</string>
     <string name="meal_image">Meal Image</string>
+    <!-- loading layout -->
+    <string name="loading">Loading, please wait…</string>
+
 
 </resources>
