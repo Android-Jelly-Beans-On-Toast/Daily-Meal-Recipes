@@ -115,6 +115,7 @@ public class GeminiUtils {
         executor.execute(() -> {
             String accessKey = BuildConfig.UNSPLASH_KEY;
 
+            // TODO: change to google api
             String urlString = "https://api.unsplash.com/search/photos?query=" + query;
             Bitmap bitmap = null;
             // send http request to unsplash api
