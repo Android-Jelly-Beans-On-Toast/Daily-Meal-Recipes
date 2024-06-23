@@ -20,7 +20,8 @@ public class RecipeActivity extends AppCompatActivity {
 
         ImageView capturedImageView = findViewById(R.id.capturedImage);
         capturedImageView.setImageBitmap(capturedImage);
-
+        GeminiUtils gm = new GeminiUtils();
+        gm.generateRecipeFromImage(capturedImage);
     }
 
     // take care of parallex effect on scroll down from image
