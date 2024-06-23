@@ -35,7 +35,9 @@ android {
             }
         }
         def apiKey = localProperties.getProperty("apiKey")
+        def unsplashKey = localProperties.getProperty("unsplashKey")
         buildConfigField("String", "API_KEY", "\"${apiKey}\"")
+        buildConfigField("String", "UNSPLASH_KEY", "\"${unsplashKey}\"")
 
     }
 
