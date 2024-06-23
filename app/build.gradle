@@ -24,9 +24,21 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        buildConfigField("String", "API_KEY", "\"${project.findProperty("apiKey")}\"")
+        vectorDrawables {
+            useSupportLibrary true
+        }
+        def localProperties = new Properties()
+        def localPropertiesFile = rootProject.file("local.properties")
+        if (localPropertiesFile.exists()) {
+            localPropertiesFile.withInputStream { stream ->
+                localProperties.load(stream)
+            }
+        }
+        def apiKey = localProperties.getProperty("apiKey")
+        buildConfigField("String", "API_KEY", "\"${apiKey}\"")
 
     }
+
 
     buildTypes {
         release {
