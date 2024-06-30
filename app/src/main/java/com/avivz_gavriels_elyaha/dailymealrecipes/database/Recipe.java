@@ -46,6 +46,7 @@ public class Recipe {
         String[] tempIngredients = null;
         String[] tempInstructions = null;
         Date tempDateOfCreation = new Date(); // default to current date
+        // TODO: add kosher, quick, lowCalories here from json (change gemini prompt)
         boolean tempKosher = false;
         boolean tempQuick = false;
         boolean tempLowCalories = false;
