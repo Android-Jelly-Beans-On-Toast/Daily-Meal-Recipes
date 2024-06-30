@@ -9,8 +9,8 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.avivz_gavriels_elyaha.dailymealrecipes.database.Meal;
 import com.avivz_gavriels_elyaha.dailymealrecipes.gemini.GeminiCallback;
-import com.avivz_gavriels_elyaha.dailymealrecipes.gemini.GeminiResponse;
 import com.avivz_gavriels_elyaha.dailymealrecipes.gemini.GeminiUtils;
 import com.avivz_gavriels_elyaha.dailymealrecipes.gemini.GeminiUtilsFactory;
 
@@ -40,7 +40,7 @@ public class RecipeActivity extends AppCompatActivity {
         // generate gemini response from captured image
         geminiUtils.generateRecipeFromImage(capturedImage, new GeminiCallback() {
             @Override
-            public void onSuccess(GeminiResponse result) {
+            public void onSuccess(Meal result) {
                 hideProgressBar(progressBar);
                 // add gemini response to the UI
 
