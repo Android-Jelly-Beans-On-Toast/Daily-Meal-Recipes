@@ -41,10 +41,20 @@ public class RecipeActivity extends AppCompatActivity {
         // generate gemini response from captured image
         geminiUtils.generateRecipeFromImage(capturedImage, new GeminiCallback() {
             @Override
-            public void onSuccess(Recipe result) {
+            public void onSuccess(Recipe result, Bitmap image) {
                 hideProgressBar(progressBar);
-                // add gemini response to the UI
 
+                // insert this recipe into the database
+                try (DatabaseHelper databaseHelper = new DatabaseHelper(RecipeActivity.this)) {
+                    long id = databaseHelper.insertRecipe(result);
+                    result.setId(id);
+                    String imageUri = result.saveImageToGallery(image, RecipeActivity.this);
+                    result.setFoodImageUri(imageUri);
+                    databaseHelper.updateRecipeImageUri(id, imageUri);
+
+                }
+
+                // add gemini response to the UI
                 // food image
                 ImageView generatedImageView = findViewById(R.id.generatedImage);
                 generatedImageView.setImageBitmap(result.getFoodImage(RecipeActivity.this));
@@ -67,11 +77,6 @@ public class RecipeActivity extends AppCompatActivity {
                 // recipe calories
                 TextView recipeCaloriesView = findViewById(R.id.recipeCalories);
                 recipeCaloriesView.setText(String.format("Estimated Calories: %s", result.getCalories()));
-
-                // insert this recipe into the database
-                try (DatabaseHelper databaseHelper = new DatabaseHelper(RecipeActivity.this)) {
-                    databaseHelper.insertRecipe(result);
-                }
             }
 
             @Override

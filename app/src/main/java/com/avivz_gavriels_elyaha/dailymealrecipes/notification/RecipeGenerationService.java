@@ -41,8 +41,9 @@ public class RecipeGenerationService extends Service {
         GeminiUtils geminiUtils = GeminiUtilsFactory.createGeminiUtils(this);
         geminiUtils.generateRecipeFromText(this.getMealTypeByHour(new Date()), new GeminiCallback() {
             @Override
-            public void onSuccess(Recipe result) {
+            public void onSuccess(Recipe result, Bitmap image) {
                 notifyUser(result);
+                // TODO: maybe save image here?
                 stopSelf();
             }
 
