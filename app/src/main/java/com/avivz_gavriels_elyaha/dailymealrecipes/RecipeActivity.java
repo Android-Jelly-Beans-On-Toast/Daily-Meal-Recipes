@@ -25,54 +25,62 @@ public class RecipeActivity extends AppCompatActivity {
 
         setTitle("Recipe from image");
 
-        // retrieve captured image from extras as bitmap
-        Bitmap capturedImage = getIntent().getParcelableExtra("capturedImage");
-        ImageView capturedImageView = findViewById(R.id.generatedImage);
-        capturedImageView.setImageBitmap(capturedImage);
+        Meal meal = (Meal) getIntent().getSerializableExtra("meal");
 
-        // get a gemini instance
-        GeminiUtils geminiUtils = GeminiUtilsFactory.createGeminiUtils(this);
+        if (meal != null) {
+            displayMeal(meal);
+        } else {
+            // retrieve captured image from extras as bitmap
+            Bitmap capturedImage = getIntent().getParcelableExtra("capturedImage");
+            ImageView capturedImageView = findViewById(R.id.generatedImage);
+            capturedImageView.setImageBitmap(capturedImage);
 
-        // show progress bar to the user
-        progressBar = findViewById(R.id.loading_layout);
-        showProgressBar(progressBar);
+            // get a gemini instance
+            GeminiUtils geminiUtils = GeminiUtilsFactory.createGeminiUtils(this);
 
-        // generate gemini response from captured image
-        geminiUtils.generateRecipeFromImage(capturedImage, new GeminiCallback() {
-            @Override
-            public void onSuccess(Meal result) {
-                hideProgressBar(progressBar);
-                // add gemini response to the UI
+            // show progress bar to the user
+            progressBar = findViewById(R.id.loading_layout);
+            showProgressBar(progressBar);
 
-                // food image
-                ImageView generatedImageView = findViewById(R.id.generatedImage);
-                generatedImageView.setImageBitmap(result.getFoodImage());
+            // generate gemini response from captured image
+            geminiUtils.generateRecipeFromImage(capturedImage, new GeminiCallback() {
+                @Override
+                public void onSuccess(Meal result) {
+                    hideProgressBar(progressBar);
+                    displayMeal(result);
+                }
 
-                // captured image
-                ImageView capturedImageView = findViewById(R.id.capturedImageButton);
-                capturedImageView.setImageBitmap(capturedImage);
+                @Override
+                public void onFailure(Throwable throwable) {
+                    hideProgressBar(progressBar);
+                }
+            });
+        }
+    }
 
-                // ingredients
-                TextView ingredientsDetailsView = findViewById(R.id.ingredientsDetails);
-                ingredientsDetailsView.setText(concatenateArray(result.getIngredients()));
+    private void displayMeal(Meal meal) {
+        // food image
+        ImageView generatedImageView = findViewById(R.id.generatedImage);
+        generatedImageView.setImageBitmap(meal.getFoodImage());
 
-                // recipe details
-                TextView recipeDetailsView = findViewById(R.id.recipeDetails);
-                recipeDetailsView.setText(concatenateArray(result.getInstructions()));
+        // captured image
+        ImageView capturedImageView = findViewById(R.id.capturedImageButton);
+        capturedImageView.setImageBitmap(meal.getFoodImage());
 
-                // recipe title
-                setTitle(result.getTitle());
+        // ingredients
+        TextView ingredientsDetailsView = findViewById(R.id.ingredientsDetails);
+        ingredientsDetailsView.setText(concatenateArray(meal.getIngredients()));
 
-                // recipe calories
-                TextView recipeCaloriesView = findViewById(R.id.recipeCalories);
-                recipeCaloriesView.setText(String.format("Estimated Calories: %s", result.getCalories()));
-            }
+        // recipe details
+        TextView recipeDetailsView = findViewById(R.id.recipeDetails);
+        recipeDetailsView.setText(concatenateArray(meal.getInstructions()));
 
-            @Override
-            public void onFailure(Throwable throwable) {
-                hideProgressBar(progressBar);
-            }
-        });
+        // recipe title
+        setTitle(meal.getTitle());
+
+        // recipe calories
+        TextView recipeCaloriesView = findViewById(R.id.recipeCalories);
+        recipeCaloriesView.setText(String.format("Estimated Calories: %s", meal.getCalories()));
     }
 
     private String concatenateArray(String[] array) {
@@ -95,5 +103,4 @@ public class RecipeActivity extends AppCompatActivity {
     private void hideProgressBar(LinearLayout progressBar) {
         progressBar.setVisibility(View.INVISIBLE);
     }
-
 }

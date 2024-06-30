@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.avivz_gavriels_elyaha.dailymealrecipes.notification.Scheduler;
 
 public class MainActivity extends AppCompatActivity {
     // Register the ActivityResultLauncher
@@ -41,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Scheduler.scheduleDailyService(this);
         ImageButton cameraButton = findViewById(R.id.buttonCamera);
         // Check if the app has permission to access the camera
         if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
