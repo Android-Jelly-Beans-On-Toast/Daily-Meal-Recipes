@@ -2,6 +2,7 @@ package com.avivz_gavriels_elyaha.dailymealrecipes;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -18,9 +19,18 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.avivz_gavriels_elyaha.dailymealrecipes.database.DatabaseHelper;
+import com.avivz_gavriels_elyaha.dailymealrecipes.database.Recipe;
+
+import java.util.ArrayList;
 
 
 public class MainActivity extends AppCompatActivity {
+
+    private SharedPreferences sp;
     // await the camera result and if its successful open the Recipe Activity
     private final ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -55,20 +65,55 @@ public class MainActivity extends AppCompatActivity {
             activityResultLauncher.launch(intent);
         });
 
+        // simulate a click on the SearchView when the the search bar image is clicked to open the search view
         ImageView backgroundImage = findViewById(R.id.searchBarImage);
         SearchView searchView = findViewById(R.id.searchBarView);
-
         backgroundImage.setOnClickListener(v -> {
-            // Simulate click on the SearchView
             searchView.requestFocus();
             searchView.setIconified(false);
         });
+
+        // take care of horizontal scroll view
+        RecyclerView previousMealsRecyclerView = findViewById(R.id.previousMealsRecyclerView);
+        RecyclerView criteriaMealsRecyclerView = findViewById(R.id.categoryMealsRecyclerView);
+        previousMealsRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        criteriaMealsRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+
+        // get recipe lists with data from database and add to adapters
+        try (DatabaseHelper database = new DatabaseHelper(this)) {
+            // get info from settings in shared preferences
+            sp = getSharedPreferences("settings", MODE_PRIVATE);
+            boolean isKosher = sp.getBoolean("kosher", false);
+            boolean isQuick = sp.getBoolean("quick", false);
+            boolean isLowCalories = sp.getBoolean("lowCalories", false);
+            int numRecentRecipes = getNumRecentRecipes();
+
+            // get recipes from database
+            ArrayList<Recipe> previousMealsRecipeList = database.getRecipes(numRecentRecipes, false, false, false);
+            ArrayList<Recipe> criteriaMealsRecipeList = database.getRecipes(numRecentRecipes, isKosher, isQuick, isLowCalories);
+
+            // create and set adapters
+            RecipeAdapter previousMealsRecipeAdapter = new RecipeAdapter(this, previousMealsRecipeList);
+            RecipeAdapter criteriaMealsRecipeAdapter = new RecipeAdapter(this, criteriaMealsRecipeList);
+            previousMealsRecyclerView.setAdapter(previousMealsRecipeAdapter);
+            criteriaMealsRecyclerView.setAdapter(criteriaMealsRecipeAdapter);
+        }
+    }
+
+    private int getNumRecentRecipes() {
+        String recentRecipesSp = sp.getString("recipeHistory", "5");
+        if (recentRecipesSp.equals("All")) {
+            return -1;
+        }
+        return Integer.parseInt(recentRecipesSp);
+
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
         MenuItem menuItem1 = menu.add("Settings");
+        // TODO: do something with menuItem2
         MenuItem menuItem2 = menu.add("Exit");
         MainActivity that = this;
         menuItem1.setOnMenuItemClickListener(item -> {

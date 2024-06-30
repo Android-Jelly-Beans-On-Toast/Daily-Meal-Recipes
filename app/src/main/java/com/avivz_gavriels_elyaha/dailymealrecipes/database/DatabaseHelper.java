@@ -10,6 +10,7 @@ import android.graphics.BitmapFactory;
 import android.util.Base64;
 
 import java.io.ByteArrayOutputStream;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -57,7 +58,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public long insertMeal(Meal response) {
+    public long insertRecipe(Recipe response) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
@@ -76,7 +77,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return id;
     }
 
-    public Meal getMeal(long id) {
+    public Recipe getRecipe(long id) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.query(TABLE_NAME,
                 new String[]{COLUMN_ID, COLUMN_TITLE, COLUMN_FOOD_IMAGE, COLUMN_CALORIES, COLUMN_INGREDIENTS, COLUMN_INSTRUCTIONS, COLUMN_DATE_OF_CREATION, COLUMN_KOSHER, COLUMN_QUICK, COLUMN_LOW_CALORIES},
@@ -86,7 +87,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             cursor.moveToFirst();
 
         assert cursor != null;
-        Meal response = new Meal(
+        Recipe response = new Recipe(
                 cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ID)),
                 cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TITLE)),
                 base64ToBitmap(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_FOOD_IMAGE))),
@@ -126,9 +127,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
     }
 
-    public Meal[] getMeals(int numberOfMeals, boolean kosher, boolean quick, boolean lowCalories) {
+    public ArrayList<Recipe> getRecipes(int numOfRecipes, boolean kosher, boolean quick, boolean lowCalories) {
         SQLiteDatabase db = this.getReadableDatabase();
-        List<Meal> meals = new ArrayList<>();
+        ArrayList<Recipe> recipes = new ArrayList<>();
 
         String selection = "1=1";
         List<String> selectionArgsList = new ArrayList<>();
@@ -157,11 +158,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 null,
                 null,
                 COLUMN_DATE_OF_CREATION + " DESC",
-                String.valueOf(numberOfMeals));
+                String.valueOf(numOfRecipes));
 
         if (cursor != null && cursor.moveToFirst()) {
             do {
-                Meal meal = new Meal(
+                Recipe recipe = new Recipe(
                         cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ID)),
                         cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TITLE)),
                         base64ToBitmap(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_FOOD_IMAGE))),
@@ -173,13 +174,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_QUICK)) == 1,
                         cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_LOW_CALORIES)) == 1
                 );
-                meals.add(meal);
+                recipes.add(recipe);
             } while (cursor.moveToNext());
             cursor.close();
         }
         db.close();
 
-        return meals.toArray(new Meal[0]);
+        return recipes;
     }
 
 }

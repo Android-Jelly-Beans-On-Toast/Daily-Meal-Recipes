@@ -40,18 +40,6 @@ public class SettingsActivity extends AppCompatActivity {
             editor.apply();
         });
 
-        // recipe categories
-        AutoCompleteTextView categoryAdapter = findViewById(R.id.categoryDropDown);
-        categoryAdapter.setText(sp.getString("category", "Breakfast"));
-        ArrayAdapter<String> adapterCategory = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, recipeCategories);
-        categoryAdapter.setAdapter(adapterCategory);
-        categoryAdapter.setOnItemClickListener((parent, view, position, id) -> {
-            String item = parent.getItemAtPosition(position).toString();
-            SharedPreferences.Editor editor = sp.edit();
-            editor.putString("category", item);
-            editor.apply();
-        });
-
         // daily notification time button
         Button timePicker = findViewById(R.id.timePicker);
         // set time picker text from shared preferences

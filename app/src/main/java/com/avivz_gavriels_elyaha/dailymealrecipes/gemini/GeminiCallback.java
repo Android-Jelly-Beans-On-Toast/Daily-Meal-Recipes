@@ -1,10 +1,10 @@
 package com.avivz_gavriels_elyaha.dailymealrecipes.gemini;
 
 
-import com.avivz_gavriels_elyaha.dailymealrecipes.database.Meal;
+import com.avivz_gavriels_elyaha.dailymealrecipes.database.Recipe;
 
 public interface GeminiCallback {
-    void onSuccess(Meal result);
+    void onSuccess(Recipe result);
 
     void onFailure(Throwable throwable);
 }

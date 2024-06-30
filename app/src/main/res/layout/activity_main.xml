@@ -36,7 +36,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:fontFamily="sans-serif-black"
-                        android:gravity="center"
+                        android:gravity="start"
                         android:paddingTop="15dp"
                         android:text="@string/capture_meal"
                         android:textSize="20sp" />
@@ -48,11 +48,11 @@
                         android:layout_weight="1"
                         android:adjustViewBounds="true"
                         android:backgroundTint="#8ADFA3"
-                        android:contentDescription="@string/search_bar_description"
+                        android:contentDescription="@string/camera_button_description"
                         android:scaleType="fitCenter"
                         android:scrollbarSize="4dp"
-                        android:src="@drawable/camerabutton__1_"
-                        tools:srcCompat="@drawable/camerabutton__1_" />
+                        android:src="@drawable/camera_button"
+                        tools:srcCompat="@drawable/camera_button" />
 
                     <TextView
                         android:id="@+id/textView14"
@@ -124,11 +124,13 @@
                                 android:layout_height="match_parent"
                                 android:orientation="vertical">
 
-                                <TextView
-                                    android:id="@+id/textView10"
+                                <androidx.recyclerview.widget.RecyclerView
+                                    android:id="@+id/previousMealsRecyclerView"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:text="TextView" />
+                                    android:orientation="horizontal"
+                                    android:padding="8dp"
+                                    android:scrollbars="horizontal" />
                             </LinearLayout>
                         </HorizontalScrollView>
 
@@ -149,11 +151,13 @@
                                 android:layout_height="match_parent"
                                 android:orientation="vertical">
 
-                                <TextView
-                                    android:id="@+id/textView12"
+                                <androidx.recyclerview.widget.RecyclerView
+                                    android:id="@+id/categoryMealsRecyclerView"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:text="TextView" />
+                                    android:orientation="horizontal"
+                                    android:padding="8dp"
+                                    android:scrollbars="horizontal" />
                             </LinearLayout>
                         </HorizontalScrollView>
 

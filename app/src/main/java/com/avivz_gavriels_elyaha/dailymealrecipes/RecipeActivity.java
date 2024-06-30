@@ -9,7 +9,8 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.avivz_gavriels_elyaha.dailymealrecipes.database.Meal;
+import com.avivz_gavriels_elyaha.dailymealrecipes.database.DatabaseHelper;
+import com.avivz_gavriels_elyaha.dailymealrecipes.database.Recipe;
 import com.avivz_gavriels_elyaha.dailymealrecipes.gemini.GeminiCallback;
 import com.avivz_gavriels_elyaha.dailymealrecipes.gemini.GeminiUtils;
 import com.avivz_gavriels_elyaha.dailymealrecipes.gemini.GeminiUtilsFactory;
@@ -40,7 +41,7 @@ public class RecipeActivity extends AppCompatActivity {
         // generate gemini response from captured image
         geminiUtils.generateRecipeFromImage(capturedImage, new GeminiCallback() {
             @Override
-            public void onSuccess(Meal result) {
+            public void onSuccess(Recipe result) {
                 hideProgressBar(progressBar);
                 // add gemini response to the UI
 
@@ -66,6 +67,11 @@ public class RecipeActivity extends AppCompatActivity {
                 // recipe calories
                 TextView recipeCaloriesView = findViewById(R.id.recipeCalories);
                 recipeCaloriesView.setText(String.format("Estimated Calories: %s", result.getCalories()));
+
+                // insert this recipe into the database
+                try (DatabaseHelper databaseHelper = new DatabaseHelper(RecipeActivity.this)) {
+                    databaseHelper.insertRecipe(result);
+                }
             }
 
             @Override

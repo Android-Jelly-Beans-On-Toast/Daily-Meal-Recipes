@@ -7,7 +7,7 @@ import org.json.JSONObject;
 
 import java.util.Date;
 
-public class Meal {
+public class Recipe {
 
     private final int id;
     private final String title;
@@ -21,12 +21,12 @@ public class Meal {
     private final boolean lowCalories;
 
     // Constructor to initialize the class fields without id
-    public Meal(JSONObject jsonObject, Bitmap foodImage) {
+    public Recipe(JSONObject jsonObject, Bitmap foodImage) {
         this(0, jsonObject, foodImage); // default id to 0 for new entries
     }
 
     // Constructor to initialize the class fields with id
-    public Meal(int id, JSONObject jsonObject, Bitmap foodImage) {
+    public Recipe(int id, JSONObject jsonObject, Bitmap foodImage) {
         this.id = id;
         this.foodImage = foodImage;
         String tempTitle = "";
@@ -103,8 +103,8 @@ public class Meal {
         this.lowCalories = tempLowCalories;
     }
 
-    public Meal(int id, String title, Bitmap foodImage, String calories, String[] ingredients, String[] instructions,
-                Date dateOfCreation, boolean kosher, boolean quick, boolean lowCalories) {
+    public Recipe(int id, String title, Bitmap foodImage, String calories, String[] ingredients, String[] instructions,
+                  Date dateOfCreation, boolean kosher, boolean quick, boolean lowCalories) {
         this.id = id;
         this.title = title;
         this.foodImage = foodImage;
