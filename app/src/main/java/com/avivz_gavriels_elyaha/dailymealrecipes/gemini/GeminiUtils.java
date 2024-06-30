@@ -33,20 +33,21 @@ import java.util.concurrent.Executors;
 
 public class GeminiUtils {
     private final GenerativeModel geminiModel;
-    private final Activity activity;
+    private final Context context;
 
-    public GeminiUtils(Activity activity) {
+    public GeminiUtils(Context context) {
         this.geminiModel = new GenerativeModel("gemini-1.5-flash", BuildConfig.API_KEY);
-        this.activity = activity;
+        this.context = context;
     }
 
+
     private String generatePrompt() {
-        SharedPreferences sp = activity.getSharedPreferences("settings", Context.MODE_PRIVATE);
+        SharedPreferences sp = context.getSharedPreferences("settings", Context.MODE_PRIVATE);
         String options = "";
-        String kosher = this.activity.getResources().getString(R.string.kosher);
-        String quick = this.activity.getResources().getString(R.string.quick);
-        String lowCalories = this.activity.getResources().getString(R.string.low_calories);
-        String geminiPrompt = this.activity.getResources().getString(R.string.promptForGemini);
+        String kosher = this.context.getResources().getString(R.string.kosher);
+        String quick = this.context.getResources().getString(R.string.quick);
+        String lowCalories = this.context.getResources().getString(R.string.low_calories);
+        String geminiPrompt = this.context.getResources().getString(R.string.promptForGemini);
         if (sp.getBoolean("kosher", false))
             options += kosher + " ";
         if (sp.getBoolean("qucick", false))
@@ -149,15 +150,21 @@ public class GeminiUtils {
                 }
 
                 Bitmap finalBitmap = bitmap;
-                this.activity.runOnUiThread(() -> {
-                    if (finalBitmap != null) {
-                        callback.onImageFetched(finalBitmap);
-                    } else {
-                        callback.onError(new Exception("Unable to fetch image"));
-                    }
-                });
+                if (this.context instanceof Activity) {
+                    Activity activity = (Activity) this.context;
+                    activity.runOnUiThread(() -> {
+                        if (finalBitmap != null) {
+                            callback.onImageFetched(finalBitmap);
+                        } else {
+                            callback.onError(new Exception("Unable to fetch image"));
+                        }
+                    });
+                }
             } catch (Exception e) {
-                this.activity.runOnUiThread(() -> callback.onError(e));
+                if (this.context instanceof Activity) {
+                    Activity activity = (Activity) this.context;
+                    activity.runOnUiThread(() -> callback.onError(e));
+                }
             } finally {
                 if (urlConnection != null) {
                     urlConnection.disconnect();
