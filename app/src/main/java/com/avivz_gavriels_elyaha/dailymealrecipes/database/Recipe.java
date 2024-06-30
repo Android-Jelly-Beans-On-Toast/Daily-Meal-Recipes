@@ -13,7 +13,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
@@ -161,7 +160,6 @@ public class Recipe {
     }
 
     public String saveImageToGallery(Bitmap bitmap, Context context) {
-        String savedImagePath = null;
         String imageFileName = "food_image_" + this.id + ".jpg";
         String appName = context.getResources().getString(R.string.app_name);
         File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/" + appName);
@@ -173,7 +171,7 @@ public class Recipe {
 
         if (success) {
             File imageFile = new File(storageDir, imageFileName);
-            savedImagePath = imageFile.getAbsolutePath();
+            String savedImagePath = imageFile.getAbsolutePath();
             try {
                 OutputStream fOut = Files.newOutputStream(imageFile.toPath());
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fOut);
