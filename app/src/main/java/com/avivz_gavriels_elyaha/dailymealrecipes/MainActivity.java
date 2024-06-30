@@ -70,14 +70,16 @@ public class MainActivity extends AppCompatActivity {
         // simulate a click on the SearchView when the the search bar image is clicked to open the search view
         ImageView backgroundImage = findViewById(R.id.searchBarImage);
         SearchView searchView = findViewById(R.id.searchBarView);
+
         backgroundImage.setOnClickListener(v -> {
+            // Simulate click on the SearchView
             searchView.requestFocus();
             searchView.setIconified(false);
         });
 
         // take care of horizontal scroll view
         RecyclerView previousMealsRecyclerView = findViewById(R.id.previousMealsRecyclerView);
-        RecyclerView criteriaMealsRecyclerView = findViewById(R.id.categoryMealsRecyclerView);
+        RecyclerView criteriaMealsRecyclerView = findViewById(R.id.criteriaMealsRecyclerView);
         previousMealsRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         criteriaMealsRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 

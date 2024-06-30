@@ -13,7 +13,7 @@ import androidx.core.app.NotificationCompat;
 
 import com.avivz_gavriels_elyaha.dailymealrecipes.R;
 import com.avivz_gavriels_elyaha.dailymealrecipes.RecipeActivity;
-import com.avivz_gavriels_elyaha.dailymealrecipes.database.Meal;
+import com.avivz_gavriels_elyaha.dailymealrecipes.database.Recipe;
 import com.avivz_gavriels_elyaha.dailymealrecipes.gemini.GeminiCallback;
 import com.avivz_gavriels_elyaha.dailymealrecipes.gemini.GeminiUtils;
 import com.avivz_gavriels_elyaha.dailymealrecipes.gemini.GeminiUtilsFactory;
@@ -41,7 +41,7 @@ public class RecipeGenerationService extends Service {
         GeminiUtils geminiUtils = GeminiUtilsFactory.createGeminiUtils(this);
         geminiUtils.generateRecipeFromText(this.getMealTypeByHour(new Date()), new GeminiCallback() {
             @Override
-            public void onSuccess(Meal result) {
+            public void onSuccess(Recipe result) {
                 notifyUser(result);
                 stopSelf();
             }
@@ -60,7 +60,7 @@ public class RecipeGenerationService extends Service {
         return null;
     }
 
-    private void notifyUser(Meal result) {
+    private void notifyUser(Recipe result) {
         createNotificationChannel();
 
         Intent intent = new Intent(this, RecipeActivity.class);

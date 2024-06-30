@@ -63,6 +63,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
 
         values.put(COLUMN_TITLE, response.getTitle());
+        // TODO: FUCKING FIX THIS SHIT
         values.put(COLUMN_FOOD_IMAGE, bitmapToBase64(response.getFoodImage()));
         values.put(COLUMN_CALORIES, response.getCalories());
         values.put(COLUMN_INGREDIENTS, arrayToString(response.getIngredients()));

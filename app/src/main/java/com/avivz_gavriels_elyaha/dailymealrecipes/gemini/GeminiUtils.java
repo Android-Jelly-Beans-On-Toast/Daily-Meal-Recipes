@@ -146,8 +146,8 @@ public class GeminiUtils {
                             @Override
                             public void onImageFetched(Bitmap bitmap) {
                                 // generate response
-                                Meal meal = new Meal(responseJson, bitmap);
-                                callback.onSuccess(meal);
+                                Recipe recipe = new Recipe(responseJson, bitmap);
+                                callback.onSuccess(recipe);
                             }
 
                             @Override
