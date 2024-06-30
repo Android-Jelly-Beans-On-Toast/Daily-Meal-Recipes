@@ -1,17 +1,28 @@
 package com.avivz_gavriels_elyaha.dailymealrecipes.database;
 
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
+import android.os.Environment;
+import android.provider.MediaStore;
+
+import com.avivz_gavriels_elyaha.dailymealrecipes.R;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.Date;
 
 public class Recipe {
 
     private final int id;
     private final String title;
-    private final Bitmap foodImage;
+    private String foodImageUri;
     private final String calories;
     private final String[] ingredients;
     private final String[] instructions;
@@ -21,14 +32,15 @@ public class Recipe {
     private final boolean lowCalories;
 
     // Constructor to initialize the class fields without id
-    public Recipe(JSONObject jsonObject, Bitmap foodImage) {
-        this(0, jsonObject, foodImage); // default id to 0 for new entries
+    public Recipe(JSONObject jsonObject) {
+        this(0, jsonObject); // default id to 0 for new entries
     }
 
+
     // Constructor to initialize the class fields with id
-    public Recipe(int id, JSONObject jsonObject, Bitmap foodImage) {
+    public Recipe(int id, JSONObject jsonObject) {
         this.id = id;
-        this.foodImage = foodImage;
+        this.foodImageUri = "";
         String tempTitle = "";
         String tempCalories = "";
         String[] tempIngredients = null;
@@ -103,11 +115,11 @@ public class Recipe {
         this.lowCalories = tempLowCalories;
     }
 
-    public Recipe(int id, String title, Bitmap foodImage, String calories, String[] ingredients, String[] instructions,
+    public Recipe(int id, String title, String foodImageUri, String calories, String[] ingredients, String[] instructions,
                   Date dateOfCreation, boolean kosher, boolean quick, boolean lowCalories) {
         this.id = id;
         this.title = title;
-        this.foodImage = foodImage;
+        this.foodImageUri = foodImageUri;
         this.calories = calories;
         this.ingredients = ingredients;
         this.instructions = instructions;
@@ -126,8 +138,58 @@ public class Recipe {
         return title;
     }
 
-    public Bitmap getFoodImage() {
-        return foodImage;
+    public String getFoodImageUri() {
+        return this.foodImageUri;
+    }
+
+    public void setFoodImageUri(String newValue) {
+        this.foodImageUri = newValue;
+    }
+
+    public Bitmap getFoodImage(Context context) {
+        return getBitmapFromUri(this.foodImageUri, context);
+    }
+
+    private Bitmap getBitmapFromUri(String imageUriString, Context context) {
+        try {
+            Uri imageUri = Uri.parse(imageUriString);
+            return MediaStore.Images.Media.getBitmap(context.getContentResolver(), imageUri);
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    public String saveImageToGallery(Bitmap bitmap, Context context) {
+        String imageFileName = "food_image_" + this.id + ".jpg";
+        String appName = context.getResources().getString(R.string.app_name);
+        File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/" + appName);
+
+        boolean success = true;
+        if (!storageDir.exists()) {
+            success = storageDir.mkdirs();
+        }
+
+        if (success) {
+            File imageFile = new File(storageDir, imageFileName);
+            String savedImagePath = imageFile.getAbsolutePath();
+            try {
+                OutputStream fOut = Files.newOutputStream(imageFile.toPath());
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fOut);
+                fOut.close();
+            } catch (Exception e) {
+                return null;
+            }
+
+            // Add the image to the system gallery
+            Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+            File f = new File(savedImagePath);
+            Uri contentUri = Uri.fromFile(f);
+            mediaScanIntent.setData(contentUri);
+            context.sendBroadcast(mediaScanIntent);
+
+            return contentUri.toString();
+        }
+        return null;
     }
 
     public String getCalories() {

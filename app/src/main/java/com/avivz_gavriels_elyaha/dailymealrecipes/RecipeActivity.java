@@ -47,7 +47,7 @@ public class RecipeActivity extends AppCompatActivity {
 
                 // food image
                 ImageView generatedImageView = findViewById(R.id.generatedImage);
-                generatedImageView.setImageBitmap(result.getFoodImage());
+                generatedImageView.setImageBitmap(result.getFoodImage(RecipeActivity.this));
 
                 // captured image
                 ImageView capturedImageView = findViewById(R.id.capturedImageButton);

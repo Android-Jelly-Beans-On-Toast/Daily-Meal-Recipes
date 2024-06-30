@@ -67,7 +67,7 @@ public class RecipeGenerationService extends Service {
         intent.putExtra("meal", (CharSequence) result);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        Bitmap foodImage = result.getFoodImage(); // Assuming getFoodImage returns a Bitmap
+        Bitmap foodImage = result.getFoodImage(this); // Assuming getFoodImage returns a Bitmap
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.logo) // Your small icon resource
