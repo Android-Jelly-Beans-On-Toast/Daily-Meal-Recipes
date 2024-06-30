@@ -20,7 +20,7 @@ import java.util.Date;
 
 public class Recipe {
 
-    private final int id;
+    private long id;
     private final String title;
     private String foodImageUri;
     private final String calories;
@@ -38,7 +38,7 @@ public class Recipe {
 
 
     // Constructor to initialize the class fields with id
-    public Recipe(int id, JSONObject jsonObject) {
+    public Recipe(long id, JSONObject jsonObject) {
         this.id = id;
         this.foodImageUri = "";
         String tempTitle = "";
@@ -46,6 +46,7 @@ public class Recipe {
         String[] tempIngredients = null;
         String[] tempInstructions = null;
         Date tempDateOfCreation = new Date(); // default to current date
+        // TODO: add kosher, quick, lowCalories here from json (change gemini prompt)
         boolean tempKosher = false;
         boolean tempQuick = false;
         boolean tempLowCalories = false;
@@ -115,7 +116,7 @@ public class Recipe {
         this.lowCalories = tempLowCalories;
     }
 
-    public Recipe(int id, String title, String foodImageUri, String calories, String[] ingredients, String[] instructions,
+    public Recipe(long id, String title, String foodImageUri, String calories, String[] ingredients, String[] instructions,
                   Date dateOfCreation, boolean kosher, boolean quick, boolean lowCalories) {
         this.id = id;
         this.title = title;
@@ -130,8 +131,12 @@ public class Recipe {
     }
 
     // Getters to access the private fields
-    public int getId() {
+    public long getId() {
         return id;
+    }
+
+    public void setId(long newId) {
+        this.id = newId;
     }
 
     public String getTitle() {
@@ -161,7 +166,7 @@ public class Recipe {
 
     public String saveImageToGallery(Bitmap bitmap, Context context) {
         String imageFileName = "food_image_" + this.id + ".jpg";
-        String appName = context.getResources().getString(R.string.app_name);
+        String appName = context.getResources().getString(R.string.app_name_no_spaces);
         File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/" + appName);
 
         boolean success = true;

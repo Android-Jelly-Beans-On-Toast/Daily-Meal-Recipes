@@ -1,6 +1,7 @@
 <resources>
     <!-- global -->
     <string name="app_name">Daily Meal Recipes</string>
+    <string name="app_name_no_spaces">DailyMealRecipes</string>
     <string name="settings_menu_item">Settings</string>
     <string name="exit_menu_item">Exit</string>
     <string name="time_format">%1$s:%2$s %3$s</string>

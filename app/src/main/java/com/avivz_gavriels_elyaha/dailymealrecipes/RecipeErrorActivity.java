@@ -12,6 +12,7 @@ public class RecipeErrorActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // TODO: continue here to make error message to the user whenever gemini failed for some reason
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_recipe_error);

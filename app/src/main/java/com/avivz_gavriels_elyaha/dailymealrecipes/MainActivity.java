@@ -78,6 +78,26 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // take care of horizontal scroll view
+        updateRecyclerViews();
+    }
+
+    private int getNumRecentRecipes() {
+        String recentRecipesSp = sp.getString("recipeHistory", "5");
+        if (recentRecipesSp.equals("All")) {
+            return -1;
+        }
+        return Integer.parseInt(recentRecipesSp);
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // update the adapters with new data
+        updateRecyclerViews();
+    }
+
+    private void updateRecyclerViews() {
         RecyclerView previousMealsRecyclerView = findViewById(R.id.previousMealsRecyclerView);
         RecyclerView criteriaMealsRecyclerView = findViewById(R.id.criteriaMealsRecyclerView);
         previousMealsRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
@@ -102,15 +122,6 @@ public class MainActivity extends AppCompatActivity {
             previousMealsRecyclerView.setAdapter(previousMealsRecipeAdapter);
             criteriaMealsRecyclerView.setAdapter(criteriaMealsRecipeAdapter);
         }
-    }
-
-    private int getNumRecentRecipes() {
-        String recentRecipesSp = sp.getString("recipeHistory", "5");
-        if (recentRecipesSp.equals("All")) {
-            return -1;
-        }
-        return Integer.parseInt(recentRecipesSp);
-
     }
 
     @Override

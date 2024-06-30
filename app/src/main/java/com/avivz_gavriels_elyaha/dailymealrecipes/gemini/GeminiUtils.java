@@ -84,8 +84,6 @@ public class GeminiUtils {
         Executor executor = Executors.newSingleThreadExecutor();
         ListenableFuture<GenerateContentResponse> response = model.generateContent(content);
 
-        Context contextReference = this.context;
-
         Futures.addCallback(response, new FutureCallback<GenerateContentResponse>() {
             @Override
             public void onSuccess(GenerateContentResponse result) {
@@ -102,8 +100,7 @@ public class GeminiUtils {
                             public void onImageFetched(Bitmap bitmap) {
                                 // generate response
                                 Recipe recipe = new Recipe(responseJson);
-                                recipe.setFoodImageUri(recipe.saveImageToGallery(bitmap, contextReference));
-                                callback.onSuccess(recipe);
+                                callback.onSuccess(recipe, bitmap);
                             }
 
                             @Override
@@ -134,8 +131,6 @@ public class GeminiUtils {
         Executor executor = Executors.newSingleThreadExecutor();
         ListenableFuture<GenerateContentResponse> response = model.generateContent(content);
 
-        Context contextReference = this.context;
-
         Futures.addCallback(response, new FutureCallback<GenerateContentResponse>() {
             @Override
             public void onSuccess(GenerateContentResponse result) {
@@ -152,8 +147,7 @@ public class GeminiUtils {
                             public void onImageFetched(Bitmap bitmap) {
                                 // generate response
                                 Recipe recipe = new Recipe(responseJson);
-                                recipe.setFoodImageUri(recipe.saveImageToGallery(bitmap, contextReference));
-                                callback.onSuccess(recipe);
+                                callback.onSuccess(recipe, bitmap);
                             }
 
                             @Override

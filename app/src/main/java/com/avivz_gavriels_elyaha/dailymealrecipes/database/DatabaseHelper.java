@@ -73,6 +73,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return id;
     }
 
+    public void updateRecipeImageUri(long id, String imageUri) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_FOOD_IMAGE, imageUri);
+
+        db.update(TABLE_NAME, values, "id = ?", new String[]{String.valueOf(id)});
+        db.close();
+    }
+
     public Recipe getRecipe(long id) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.query(TABLE_NAME,
@@ -84,7 +93,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         assert cursor != null;
         Recipe response = new Recipe(
-                cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ID)),
+                cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_ID)),
                 cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TITLE)),
                 cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_FOOD_IMAGE)),
                 cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CALORIES)),
@@ -148,7 +157,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (cursor != null && cursor.moveToFirst()) {
             do {
                 Recipe recipe = new Recipe(
-                        cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ID)),
+                        cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_ID)),
                         cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TITLE)),
                         cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_FOOD_IMAGE)),
                         cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CALORIES)),
