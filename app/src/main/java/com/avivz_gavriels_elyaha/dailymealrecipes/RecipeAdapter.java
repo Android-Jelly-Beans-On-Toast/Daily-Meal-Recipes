@@ -1,7 +1,6 @@
 package com.avivz_gavriels_elyaha.dailymealrecipes;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,7 +35,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
         Recipe recipe = recipeList.get(position);
         holder.recipeTitle.setText(recipe.getTitle());
         holder.recipeCriteria.setText(getCriteria(recipe));
-        holder.recipeImage.setImageBitmap(recipe.getFoodImage());
+        holder.recipeImage.setImageBitmap(recipe.getFoodImage(this.context));
     }
 
     private String getCriteria(Recipe recipe) {

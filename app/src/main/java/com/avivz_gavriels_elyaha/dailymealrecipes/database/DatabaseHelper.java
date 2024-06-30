@@ -5,12 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.util.Base64;
 
-import java.io.ByteArrayOutputStream;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -64,7 +59,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         values.put(COLUMN_TITLE, response.getTitle());
         // TODO: FUCKING FIX THIS SHIT
-        values.put(COLUMN_FOOD_IMAGE, bitmapToBase64(response.getFoodImage()));
+        values.put(COLUMN_FOOD_IMAGE, response.getFoodImageUri());
         values.put(COLUMN_CALORIES, response.getCalories());
         values.put(COLUMN_INGREDIENTS, arrayToString(response.getIngredients()));
         values.put(COLUMN_INSTRUCTIONS, arrayToString(response.getInstructions()));
@@ -91,7 +86,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Recipe response = new Recipe(
                 cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ID)),
                 cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TITLE)),
-                base64ToBitmap(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_FOOD_IMAGE))),
+                cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_FOOD_IMAGE)),
                 cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CALORIES)),
                 stringToArray(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_INGREDIENTS))),
                 stringToArray(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_INSTRUCTIONS))),
@@ -116,17 +111,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return str.split(",");
     }
 
-    private String bitmapToBase64(Bitmap bitmap) {
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
-        byte[] byteArray = byteArrayOutputStream.toByteArray();
-        return Base64.encodeToString(byteArray, Base64.DEFAULT);
-    }
-
-    private Bitmap base64ToBitmap(String base64Str) throws IllegalArgumentException {
-        byte[] decodedBytes = Base64.decode(base64Str, Base64.DEFAULT);
-        return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
-    }
 
     public ArrayList<Recipe> getRecipes(int numOfRecipes, boolean kosher, boolean quick, boolean lowCalories) {
         SQLiteDatabase db = this.getReadableDatabase();
@@ -166,7 +150,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 Recipe recipe = new Recipe(
                         cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ID)),
                         cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TITLE)),
-                        base64ToBitmap(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_FOOD_IMAGE))),
+                        cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_FOOD_IMAGE)),
                         cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CALORIES)),
                         stringToArray(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_INGREDIENTS))),
                         stringToArray(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_INSTRUCTIONS))),
@@ -183,5 +167,4 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         return recipes;
     }
-
 }
