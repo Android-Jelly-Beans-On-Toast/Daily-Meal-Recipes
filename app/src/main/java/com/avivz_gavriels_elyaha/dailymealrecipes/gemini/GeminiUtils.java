@@ -33,20 +33,21 @@ import java.util.concurrent.Executors;
 
 public class GeminiUtils {
     private final GenerativeModel geminiModel;
-    private final Activity activity;
+    private final Context context;
 
-    public GeminiUtils(Activity activity) {
+    public GeminiUtils(Context context) {
         this.geminiModel = new GenerativeModel("gemini-1.5-flash", BuildConfig.API_KEY);
-        this.activity = activity;
+        this.context = context;
     }
 
-    private String generatePrompt() {
-        SharedPreferences sp = activity.getSharedPreferences("settings", Context.MODE_PRIVATE);
+
+    private String generatePromptForImage() {
+        SharedPreferences sp = context.getSharedPreferences("settings", Context.MODE_PRIVATE);
         String options = "";
-        String kosher = this.activity.getResources().getString(R.string.kosher);
-        String quick = this.activity.getResources().getString(R.string.quick);
-        String lowCalories = this.activity.getResources().getString(R.string.low_calories);
-        String geminiPrompt = this.activity.getResources().getString(R.string.promptForGemini);
+        String kosher = this.context.getResources().getString(R.string.kosher);
+        String quick = this.context.getResources().getString(R.string.quick);
+        String lowCalories = this.context.getResources().getString(R.string.low_calories);
+        String geminiPrompt = this.context.getResources().getString(R.string.promptForGeminiImage);
         if (sp.getBoolean("kosher", false))
             options += kosher + " ";
         if (sp.getBoolean("qucick", false))
@@ -56,10 +57,74 @@ public class GeminiUtils {
         return String.format(geminiPrompt, options);
     }
 
+    private String generatePromptForText(String mealType) {
+        SharedPreferences sp = context.getSharedPreferences("settings", Context.MODE_PRIVATE);
+        String options = "";
+        String kosher = this.context.getResources().getString(R.string.kosher);
+        String quick = this.context.getResources().getString(R.string.quick);
+        String lowCalories = this.context.getResources().getString(R.string.low_calories);
+        String geminiPrompt = this.context.getResources().getString(R.string.promptForGeminiText);
+        if (sp.getBoolean("kosher", false))
+            options += kosher + " ";
+        if (sp.getBoolean("qucick", false))
+            options += quick + " ";
+        if (sp.getBoolean("lowCalories", false))
+            options += lowCalories + " ";
+        return String.format(geminiPrompt, options, mealType);
+    }
+
+
     public void generateRecipeFromImage(Bitmap image, GeminiCallback callback) {
         Content content = new Content.Builder()
-                .addText(generatePrompt())
+                .addText(generatePromptForImage())
                 .addImage(image)
+                .build();
+
+        GenerativeModelFutures model = GenerativeModelFutures.from(this.geminiModel);
+        Executor executor = Executors.newSingleThreadExecutor();
+        ListenableFuture<GenerateContentResponse> response = model.generateContent(content);
+
+        Futures.addCallback(response, new FutureCallback<GenerateContentResponse>() {
+            @Override
+            public void onSuccess(GenerateContentResponse result) {
+                Log.d("GeminiResponse", "onSuccess!");
+                String resultText = result.getText();
+                if (resultText != null) {
+                    Log.d("GeminiResponse", resultText);
+                    try {
+                        // Parse the JSON response string
+                        JSONObject responseJson = new JSONObject(resultText.substring(8, resultText.length() - 4));
+
+                        searchImage(responseJson.getString("title"), new searchImageCallback() {
+                            @Override
+                            public void onImageFetched(Bitmap bitmap) {
+                                // generate response
+                                Meal meal = new Meal(responseJson, bitmap);
+                                callback.onSuccess(meal);
+                            }
+
+                            @Override
+                            public void onError(Exception e) {
+                                callback.onFailure(e);
+                            }
+                        });
+                    } catch (Exception e) {
+                        callback.onFailure(e);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Throwable throwable) {
+                Log.e("GeminiResponse", "Failed to generate content", throwable);
+                callback.onFailure(throwable);
+            }
+        }, executor);
+    }
+
+    public void generateRecipeFromText(String mealType, GeminiCallback callback) {
+        Content content = new Content.Builder()
+                .addText(generatePromptForText(mealType))
                 .build();
 
         GenerativeModelFutures model = GenerativeModelFutures.from(this.geminiModel);
@@ -149,15 +214,21 @@ public class GeminiUtils {
                 }
 
                 Bitmap finalBitmap = bitmap;
-                this.activity.runOnUiThread(() -> {
-                    if (finalBitmap != null) {
-                        callback.onImageFetched(finalBitmap);
-                    } else {
-                        callback.onError(new Exception("Unable to fetch image"));
-                    }
-                });
+                if (this.context instanceof Activity) {
+                    Activity activity = (Activity) this.context;
+                    activity.runOnUiThread(() -> {
+                        if (finalBitmap != null) {
+                            callback.onImageFetched(finalBitmap);
+                        } else {
+                            callback.onError(new Exception("Unable to fetch image"));
+                        }
+                    });
+                }
             } catch (Exception e) {
-                this.activity.runOnUiThread(() -> callback.onError(e));
+                if (this.context instanceof Activity) {
+                    Activity activity = (Activity) this.context;
+                    activity.runOnUiThread(() -> callback.onError(e));
+                }
             } finally {
                 if (urlConnection != null) {
                     urlConnection.disconnect();
