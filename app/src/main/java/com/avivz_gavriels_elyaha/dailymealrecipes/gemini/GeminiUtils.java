@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
 
 import com.avivz_gavriels_elyaha.dailymealrecipes.BuildConfig;
 import com.avivz_gavriels_elyaha.dailymealrecipes.R;
-import com.avivz_gavriels_elyaha.dailymealrecipes.database.Meal;
+import com.avivz_gavriels_elyaha.dailymealrecipes.database.Recipe;
 import com.google.ai.client.generativeai.GenerativeModel;
 import com.google.ai.client.generativeai.java.GenerativeModelFutures;
 import com.google.ai.client.generativeai.type.Content;
@@ -99,8 +99,8 @@ public class GeminiUtils {
                             @Override
                             public void onImageFetched(Bitmap bitmap) {
                                 // generate response
-                                Meal meal = new Meal(responseJson, bitmap);
-                                callback.onSuccess(meal);
+                                Recipe recipe = new Recipe(responseJson, bitmap);
+                                callback.onSuccess(recipe);
                             }
 
                             @Override

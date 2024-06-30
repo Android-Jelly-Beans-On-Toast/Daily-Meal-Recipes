@@ -20,6 +20,9 @@
         android:theme="@style/Theme.DailyMealRecipes"
         tools:targetApi="31">
         <activity
+            android:name=".RecipeErrorActivity"
+            android:exported="false" />
+        <activity
             android:name=".RecipeActivity"
             android:exported="false" />
         <activity
