@@ -3,12 +3,15 @@ package com.avivz_gavriels_elyaha.dailymealrecipes.gemini;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 
 import com.avivz_gavriels_elyaha.dailymealrecipes.BuildConfig;
 import com.avivz_gavriels_elyaha.dailymealrecipes.R;
+import com.avivz_gavriels_elyaha.dailymealrecipes.database.Meal;
 import com.google.ai.client.generativeai.GenerativeModel;
 import com.google.ai.client.generativeai.java.GenerativeModelFutures;
 import com.google.ai.client.generativeai.type.Content;
@@ -20,16 +23,13 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import org.json.JSONObject;
+
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-
-import org.json.JSONObject;
 
 public class GeminiUtils {
     private final GenerativeModel geminiModel;
@@ -81,8 +81,8 @@ public class GeminiUtils {
                             @Override
                             public void onImageFetched(Bitmap bitmap) {
                                 // generate response
-                                GeminiResponse geminiResponse = new GeminiResponse(responseJson, bitmap);
-                                callback.onSuccess(geminiResponse);
+                                Meal meal = new Meal(responseJson, bitmap);
+                                callback.onSuccess(meal);
                             }
 
                             @Override
