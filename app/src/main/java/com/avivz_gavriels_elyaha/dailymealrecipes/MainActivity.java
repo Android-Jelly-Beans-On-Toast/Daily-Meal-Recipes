@@ -10,6 +10,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.SearchView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -19,7 +21,7 @@ import androidx.core.content.ContextCompat;
 
 
 public class MainActivity extends AppCompatActivity {
-    // Register the ActivityResultLauncher
+    // await the camera result and if its successful open the Recipe Activity
     private final ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
@@ -51,6 +53,15 @@ public class MainActivity extends AppCompatActivity {
         cameraButton.setOnClickListener(v -> {
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             activityResultLauncher.launch(intent);
+        });
+
+        ImageView backgroundImage = findViewById(R.id.searchBarImage);
+        SearchView searchView = findViewById(R.id.searchBarView);
+
+        backgroundImage.setOnClickListener(v -> {
+            // Simulate click on the SearchView
+            searchView.requestFocus();
+            searchView.setIconified(false);
         });
     }
 
