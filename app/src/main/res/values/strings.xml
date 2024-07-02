@@ -10,9 +10,9 @@
     <string name="enable_notifications">Enable Notifications</string>
     <string name="recipe_category">Recipe Category</string>
     <string name="num_recent_recipes"># Recent Recipes</string>
-    <string name="kosher">Kosher</string>
-    <string name="quick">Quick</string>
-    <string name="low_calories">Low Calories</string>
+    <string name="kosher">kosher</string>
+    <string name="quick">quick to make</string>
+    <string name="low_calories">low calories</string>
     <string name="recipes_criteria">Recipes Criteria</string>
     <string name="general">General</string>
     <string name="pick_time">Pick Time</string>
@@ -30,15 +30,21 @@
     <!-- loading layout -->
     <string name="loading">Loading, please wait…</string>
     <!-- prompt values -->
-    <string name="promptForGeminiImage">generate a %s recipe for the meal in the image, estimate the calories in your recipe. format your response in a json format, the key names will be "ingredients" for the ingredients, and "steps" for the steps to make the meal, "title" for the name of the meal, and "calories" for the estimated calories of the meal.</string>
+    <string name="promptForGeminiImage">generate a %s recipe for the meal in the image, estimate the calories in your recipe. format your response in a json format, the key names will be "ingredients" for the ingredients, and "steps" for the steps to make the meal, "title" for the name of the meal, and "calories" for the estimated calories of the meal. if you cannot see any food or meal in the image, return an empty string.</string>
     <string name="promptForGeminiText">generate a %s recipe for %s, estimate the calories in your recipe. format your response in a json format, the key names will be "ingredients" for the ingredients, and "steps" for the steps to make the meal, "title" for the name of the meal, and "calories" for the estimated calories of the meal.</string>
     <string name="promptForGemini">generate a %s recipe for the recipe in the image, estimate the calories in your recipe. format your response in a json format, the key names will be "ingredients" for the ingredients, and "steps" for the steps to make the recipe, "title" for the name of the recipe, and "calories" for the estimated calories of the recipe.</string>
+
+    <!-- recipe error screen -->
+    <string name="recipe_error_title">Something went wrong :(</string>
+    <string name="recipe_error_message">Sorry, we were unable to find a recipe for the captured image.\nPlease try again.</string>
+    <string name="recipe_error_try_again">Try Again</string>
+    <string name="recipe_error_main_screen">Main Menu</string>
 
     <!-- main activity  -->
     <string name="search_bar_description">I want to eat…</string>
     <string name="camera_button_description">Capture a meal</string>
     <string name="previous_meals">Recent</string>
-    <string name="category_meals">%s Meals</string>
+    <string name="category_meals">Specific Meals</string>
     <string name="capture_meal">Take a picture</string>
     <string name="search_meal">I want to eat…</string>
     <string name="content_description_image">Meal image</string>

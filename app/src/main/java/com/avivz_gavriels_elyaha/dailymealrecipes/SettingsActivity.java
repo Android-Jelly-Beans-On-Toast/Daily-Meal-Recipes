@@ -15,7 +15,6 @@ import com.google.android.material.switchmaterial.SwitchMaterial;
 public class SettingsActivity extends AppCompatActivity {
     private SharedPreferences sp;
     private final String[] recentHistoryOptions = {"5", "10", "15", "All"};
-    private final String[] recipeCategories = {"Breakfast", "Lunch", "Dinner", "Dessert"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +68,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         // enable kosher switch
         SwitchMaterial kosherSwitch = findViewById(R.id.kosherSwitch);
-        kosherSwitch.setChecked(sp.getBoolean("kosher", true));
+        kosherSwitch.setChecked(sp.getBoolean("kosher", false));
         kosherSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             boolean state = buttonView.isChecked();
             SharedPreferences.Editor editor = sp.edit();

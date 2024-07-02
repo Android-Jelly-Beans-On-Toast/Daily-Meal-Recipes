@@ -49,11 +49,11 @@ public class GeminiUtils {
         String lowCalories = this.context.getResources().getString(R.string.low_calories);
         String geminiPrompt = this.context.getResources().getString(R.string.promptForGeminiImage);
         if (sp.getBoolean("kosher", false))
-            options += kosher + " ";
-        if (sp.getBoolean("qucick", false))
+            options += kosher + ", ";
+        if (sp.getBoolean("quick", false))
             options += quick + " ";
         if (sp.getBoolean("lowCalories", false))
-            options += lowCalories + " ";
+            options += "and " + lowCalories + " ";
         return String.format(geminiPrompt, options);
     }
 
@@ -65,8 +65,8 @@ public class GeminiUtils {
         String lowCalories = this.context.getResources().getString(R.string.low_calories);
         String geminiPrompt = this.context.getResources().getString(R.string.promptForGeminiText);
         if (sp.getBoolean("kosher", false))
-            options += kosher + " ";
-        if (sp.getBoolean("qucick", false))
+            options += kosher + ", ";
+        if (sp.getBoolean("quick", false))
             options += quick + " ";
         if (sp.getBoolean("lowCalories", false))
             options += lowCalories + " ";
@@ -99,7 +99,7 @@ public class GeminiUtils {
                             @Override
                             public void onImageFetched(Bitmap bitmap) {
                                 // generate response
-                                Recipe recipe = new Recipe(responseJson);
+                                Recipe recipe = new Recipe(responseJson, context);
                                 callback.onSuccess(recipe, bitmap);
                             }
 
@@ -146,7 +146,7 @@ public class GeminiUtils {
                             @Override
                             public void onImageFetched(Bitmap bitmap) {
                                 // generate response
-                                Recipe recipe = new Recipe(responseJson);
+                                Recipe recipe = new Recipe(responseJson, context);
                                 callback.onSuccess(recipe, bitmap);
                             }
 

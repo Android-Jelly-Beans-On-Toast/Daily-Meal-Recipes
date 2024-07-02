@@ -2,10 +2,12 @@ package com.avivz_gavriels_elyaha.dailymealrecipes.database;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 
 import com.avivz_gavriels_elyaha.dailymealrecipes.R;
 
@@ -33,13 +35,14 @@ public class Recipe implements Serializable {
     private final boolean lowCalories;
 
     // Constructor to initialize the class fields without id
-    public Recipe(JSONObject jsonObject) {
-        this(0, jsonObject); // default id to 0 for new entries
+    public Recipe(JSONObject jsonObject, Context context) {
+        this(0, jsonObject, context); // default id to 0 for new entries
     }
 
 
     // Constructor to initialize the class fields with id
-    public Recipe(long id, JSONObject jsonObject) {
+    public Recipe(long id, JSONObject jsonObject, Context context) {
+        SharedPreferences sp = context.getSharedPreferences("settings", Context.MODE_PRIVATE);
         this.id = id;
         this.foodImageUri = "";
         String tempTitle = "";
@@ -48,9 +51,9 @@ public class Recipe implements Serializable {
         String[] tempInstructions = null;
         Date tempDateOfCreation = new Date(); // default to current date
         // TODO: add kosher, quick, lowCalories here from json (change gemini prompt)
-        boolean tempKosher = false;
-        boolean tempQuick = false;
-        boolean tempLowCalories = false;
+        boolean tempKosher = sp.getBoolean("kosher", false);
+        boolean tempQuick = sp.getBoolean("quick", false);
+        boolean tempLowCalories = sp.getBoolean("lowCalories", false);
 
         try {
             // Extract the title (if present)
@@ -86,24 +89,9 @@ public class Recipe implements Serializable {
                 tempDateOfCreation = new Date(jsonObject.getLong("dateOfCreation"));
             }
 
-            // Extract the kosher flag (if present)
-            if (jsonObject.has("kosher")) {
-                tempKosher = jsonObject.getBoolean("kosher");
-            }
-
-            // Extract the quick flag (if present)
-            if (jsonObject.has("quick")) {
-                tempQuick = jsonObject.getBoolean("quick");
-            }
-
-            // Extract the lowCalories flag (if present)
-            if (jsonObject.has("lowCalories")) {
-                tempLowCalories = jsonObject.getBoolean("lowCalories");
-            }
-
         } catch (Exception e) {
-            // Handle any parsing exceptions
-            // TODO: add error message to user
+            // Handle any exceptions that may occur during the parsing process
+            Log.d("Recipe", "Error parsing JSON");
         }
 
         // Assign the extracted values to the class fields
