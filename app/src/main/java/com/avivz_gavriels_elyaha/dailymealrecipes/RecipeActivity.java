@@ -1,5 +1,6 @@
 package com.avivz_gavriels_elyaha.dailymealrecipes;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
@@ -65,7 +66,10 @@ public class RecipeActivity extends AppCompatActivity {
 
                 @Override
                 public void onFailure(Throwable throwable) {
+                    Intent intent = new Intent(RecipeActivity.this, RecipeErrorActivity.class);
+                    startActivity(intent);
                     hideProgressBar(progressBar);
+                    finish();
                 }
             });
         }

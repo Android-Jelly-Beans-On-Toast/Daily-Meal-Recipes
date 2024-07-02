@@ -58,15 +58,16 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
         }
         if (recipe.isQuick()) {
             if (result.length() > 0) {
-                result.append(" ✅");
+                result.append(" ");
             }
-            result.append("Quick");
+            result.append("✅Quick");
+
         }
         if (recipe.isLowCalories()) {
             if (result.length() > 0) {
-                result.append(" ✅");
+                result.append(" ");
             }
-            result.append("LowCalories");
+            result.append("✅LowCalories");
         }
 
         return result.toString();

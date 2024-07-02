@@ -76,7 +76,6 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.OnI
             searchView.requestFocus();
             searchView.setIconified(false);
         });
-
         // take care of horizontal scroll view
         updateRecyclerViews();
     }
@@ -127,14 +126,19 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.OnI
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-        MenuItem menuItem1 = menu.add("Settings");
+        MenuItem settingsMenuItem = menu.add("Settings");
         // TODO: do something with menuItem2
-        MenuItem menuItem2 = menu.add("Exit");
+        MenuItem exitMenuItem = menu.add("Exit");
         MainActivity that = this;
-        menuItem1.setOnMenuItemClickListener(item -> {
+        settingsMenuItem.setOnMenuItemClickListener(item -> {
             Log.d("hello", "setting clicked!");
             Intent intent = new Intent(that, SettingsActivity.class);
             startActivity(intent);
+            return true;
+        });
+        exitMenuItem.setOnMenuItemClickListener(item -> {
+            finish();
+            System.exit(0);
             return true;
         });
         return true;
