@@ -26,64 +26,70 @@ public class RecipeActivity extends AppCompatActivity {
 
         setTitle("Recipe from image");
 
-        // retrieve captured image from extras as bitmap
-        Bitmap capturedImage = getIntent().getParcelableExtra("capturedImage");
-        ImageView capturedImageView = findViewById(R.id.generatedImage);
-        capturedImageView.setImageBitmap(capturedImage);
-
-        // get a gemini instance
-        GeminiUtils geminiUtils = GeminiUtilsFactory.createGeminiUtils(this);
-
         // show progress bar to the user
         progressBar = findViewById(R.id.loading_layout);
         showProgressBar(progressBar);
 
-        // generate gemini response from captured image
-        geminiUtils.generateRecipeFromImage(capturedImage, new GeminiCallback() {
-            @Override
-            public void onSuccess(Recipe result, Bitmap image) {
-                hideProgressBar(progressBar);
+        // retrieve captured image from extras as bitmap
+        Bitmap capturedImage = getIntent().getParcelableExtra("capturedImage");
 
-                // insert this recipe into the database
-                try (DatabaseHelper databaseHelper = new DatabaseHelper(RecipeActivity.this)) {
-                    long id = databaseHelper.insertRecipe(result);
-                    result.setId(id);
-                    String imageUri = result.saveImageToGallery(image, RecipeActivity.this);
-                    result.setFoodImageUri(imageUri);
-                    databaseHelper.updateRecipeImageUri(id, imageUri);
+        // retrieve recipe if it came from a notification or from scrolling menu in main activity
+        Recipe recipe = (Recipe) getIntent().getSerializableExtra("recipe");
 
+        // get a gemini instance
+        GeminiUtils geminiUtils = GeminiUtilsFactory.createGeminiUtils(this);
+
+
+        // update UI based on existing recipe or generate a new recipe
+        if (recipe != null) {
+            updateRecipeDetails(recipe);
+            hideProgressBar(progressBar);
+        } else {
+
+            geminiUtils.generateRecipeFromImage(capturedImage, new GeminiCallback() {
+                @Override
+                public void onSuccess(Recipe result, Bitmap image) {
+                    // insert this recipe into the database
+                    try (DatabaseHelper databaseHelper = new DatabaseHelper(RecipeActivity.this)) {
+                        long id = databaseHelper.insertRecipe(result);
+                        result.setId(id);
+                        String imageUri = result.saveImageToGallery(image, RecipeActivity.this);
+                        result.setFoodImageUri(imageUri);
+                        databaseHelper.updateRecipeImageUri(id, imageUri);
+
+                    }
+                    // update UI with recipe details
+                    updateRecipeDetails(result);
+                    hideProgressBar(progressBar);
                 }
 
-                // add gemini response to the UI
-                // food image
-                ImageView generatedImageView = findViewById(R.id.generatedImage);
-                generatedImageView.setImageBitmap(result.getFoodImage(RecipeActivity.this));
+                @Override
+                public void onFailure(Throwable throwable) {
+                    hideProgressBar(progressBar);
+                }
+            });
+        }
+    }
 
-                // captured image
-                ImageView capturedImageView = findViewById(R.id.capturedImageButton);
-                capturedImageView.setImageBitmap(capturedImage);
+    private void updateRecipeDetails(Recipe recipe) {
+        // food image
+        ImageView generatedImageView = findViewById(R.id.generatedImage);
+        generatedImageView.setImageBitmap(recipe.getFoodImage(RecipeActivity.this));
 
-                // ingredients
-                TextView ingredientsDetailsView = findViewById(R.id.ingredientsDetails);
-                ingredientsDetailsView.setText(concatenateArray(result.getIngredients()));
+        // ingredients
+        TextView ingredientsDetailsView = findViewById(R.id.ingredientsDetails);
+        ingredientsDetailsView.setText(concatenateArray(recipe.getIngredients()));
 
-                // recipe details
-                TextView recipeDetailsView = findViewById(R.id.recipeDetails);
-                recipeDetailsView.setText(concatenateArray(result.getInstructions()));
+        // recipe details
+        TextView recipeDetailsView = findViewById(R.id.recipeDetails);
+        recipeDetailsView.setText(concatenateArray(recipe.getInstructions()));
 
-                // recipe title
-                setTitle(result.getTitle());
+        // recipe title
+        setTitle(recipe.getTitle());
 
-                // recipe calories
-                TextView recipeCaloriesView = findViewById(R.id.recipeCalories);
-                recipeCaloriesView.setText(String.format("Estimated Calories: %s", result.getCalories()));
-            }
-
-            @Override
-            public void onFailure(Throwable throwable) {
-                hideProgressBar(progressBar);
-            }
-        });
+        // recipe calories
+        TextView recipeCaloriesView = findViewById(R.id.recipeCalories);
+        recipeCaloriesView.setText(String.format("Estimated Calories: %s", recipe.getCalories()));
     }
 
     private String concatenateArray(String[] array) {

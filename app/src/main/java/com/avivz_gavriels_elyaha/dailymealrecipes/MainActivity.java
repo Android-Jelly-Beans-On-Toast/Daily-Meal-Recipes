@@ -29,7 +29,7 @@ import java.util.ArrayList;
 
 import com.avivz_gavriels_elyaha.dailymealrecipes.notification.Scheduler;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements RecipeAdapter.OnItemClickListener {
 
     private SharedPreferences sp;
     // await the camera result and if its successful open the Recipe Activity
@@ -117,8 +117,8 @@ public class MainActivity extends AppCompatActivity {
             ArrayList<Recipe> criteriaMealsRecipeList = database.getRecipes(numRecentRecipes, isKosher, isQuick, isLowCalories);
 
             // create and set adapters
-            RecipeAdapter previousMealsRecipeAdapter = new RecipeAdapter(this, previousMealsRecipeList);
-            RecipeAdapter criteriaMealsRecipeAdapter = new RecipeAdapter(this, criteriaMealsRecipeList);
+            RecipeAdapter previousMealsRecipeAdapter = new RecipeAdapter(this, previousMealsRecipeList, this);
+            RecipeAdapter criteriaMealsRecipeAdapter = new RecipeAdapter(this, criteriaMealsRecipeList, this);
             previousMealsRecyclerView.setAdapter(previousMealsRecipeAdapter);
             criteriaMealsRecyclerView.setAdapter(criteriaMealsRecipeAdapter);
         }
@@ -138,5 +138,12 @@ public class MainActivity extends AppCompatActivity {
             return true;
         });
         return true;
+    }
+
+    @Override
+    public void onItemClick(Recipe recipe) {
+        Intent intent = new Intent(this, RecipeActivity.class);
+        intent.putExtra("recipe", recipe);
+        startActivity(intent);
     }
 }

@@ -18,9 +18,16 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
     private final List<Recipe> recipeList;
     private final Context context;
 
-    public RecipeAdapter(Context context, List<Recipe> recipeList) {
+    private final OnItemClickListener onItemClickListener;
+
+    public RecipeAdapter(Context context, List<Recipe> recipeList, OnItemClickListener onItemClickListener) {
         this.context = context;
         this.recipeList = recipeList;
+        this.onItemClickListener = onItemClickListener;
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(Recipe recipe);
     }
 
     @NonNull
@@ -36,6 +43,8 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
         holder.recipeTitle.setText(recipe.getTitle());
         holder.recipeCriteria.setText(getCriteria(recipe));
         holder.recipeImage.setImageBitmap(recipe.getFoodImage(this.context));
+
+        holder.itemView.setOnClickListener(v -> onItemClickListener.onItemClick(recipe));
     }
 
     private String getCriteria(Recipe recipe) {

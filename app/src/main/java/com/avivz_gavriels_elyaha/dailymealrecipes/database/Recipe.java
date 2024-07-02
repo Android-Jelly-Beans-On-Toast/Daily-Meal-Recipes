@@ -15,10 +15,11 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.nio.file.Files;
 import java.util.Date;
 
-public class Recipe {
+public class Recipe implements Serializable {
 
     private long id;
     private final String title;
@@ -224,4 +225,5 @@ public class Recipe {
     public boolean isLowCalories() {
         return lowCalories;
     }
+
 }
