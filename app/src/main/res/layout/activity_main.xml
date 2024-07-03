@@ -115,24 +115,23 @@
                             android:text="@string/previous_meals"
                             android:textSize="42sp" />
 
-                        <HorizontalScrollView
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/previousMealsRecyclerView"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
+                            android:layout_height="wrap_content"
+                            android:nestedScrollingEnabled="false"
+                            android:orientation="horizontal"
+                            android:padding="8dp"
+                            android:scrollbars="horizontal">
 
-                            <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:orientation="vertical">
+                        </androidx.recyclerview.widget.RecyclerView>
 
-                                <androidx.recyclerview.widget.RecyclerView
-                                    android:id="@+id/previousMealsRecyclerView"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:orientation="horizontal"
-                                    android:padding="8dp"
-                                    android:scrollbars="horizontal" />
-                            </LinearLayout>
-                        </HorizontalScrollView>
+                        <TextView
+                            android:id="@+id/recentMealsEmpty"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/recent_empty_text"
+                            android:textSize="20sp" />
 
                         <TextView
                             android:id="@+id/criteriaMealsTitle"
@@ -142,24 +141,21 @@
                             android:text="@string/category_meals"
                             android:textSize="42sp" />
 
-                        <HorizontalScrollView
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/criteriaMealsRecyclerView"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
+                            android:layout_height="wrap_content"
+                            android:nestedScrollingEnabled="false"
+                            android:orientation="horizontal"
+                            android:padding="8dp"
+                            android:scrollbars="horizontal" />
 
-                            <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:orientation="vertical">
-
-                                <androidx.recyclerview.widget.RecyclerView
-                                    android:id="@+id/criteriaMealsRecyclerView"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:orientation="horizontal"
-                                    android:padding="8dp"
-                                    android:scrollbars="horizontal" />
-                            </LinearLayout>
-                        </HorizontalScrollView>
+                        <TextView
+                            android:id="@+id/criteriaMealsEmpty"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/criteria_empty_text"
+                            android:textSize="20sp" />
 
                     </LinearLayout>
 

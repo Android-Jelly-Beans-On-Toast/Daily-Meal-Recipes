@@ -1,8 +1,13 @@
 package com.avivz_gavriels_elyaha.dailymealrecipes;
 
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -15,6 +20,9 @@ import com.avivz_gavriels_elyaha.dailymealrecipes.database.Recipe;
 import com.avivz_gavriels_elyaha.dailymealrecipes.gemini.GeminiCallback;
 import com.avivz_gavriels_elyaha.dailymealrecipes.gemini.GeminiUtils;
 import com.avivz_gavriels_elyaha.dailymealrecipes.gemini.GeminiUtilsFactory;
+
+import java.io.File;
+import java.io.OutputStream;
 
 public class RecipeActivity extends AppCompatActivity {
 
@@ -54,7 +62,7 @@ public class RecipeActivity extends AppCompatActivity {
                     try (DatabaseHelper databaseHelper = new DatabaseHelper(RecipeActivity.this)) {
                         long id = databaseHelper.insertRecipe(result);
                         result.setId(id);
-                        String imageUri = result.saveImageToGallery(image, RecipeActivity.this);
+                        String imageUri = saveImageToGallery(image, RecipeActivity.this, result.getId());
                         result.setFoodImageUri(imageUri);
                         databaseHelper.updateRecipeImageUri(id, imageUri);
 
@@ -73,6 +81,48 @@ public class RecipeActivity extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    private String saveImageToGallery(Bitmap bitmap, Context context, long id) {
+        String imageFileName = "food_image_" + id + ".jpg";
+        String appName = context.getResources().getString(R.string.app_name_no_spaces);
+        File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/" + appName);
+
+        ContentValues values = new ContentValues();
+        values.put(MediaStore.Images.Media.DISPLAY_NAME, imageFileName);
+        values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
+        values.put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + "/DailyMealRecipes");
+
+        Uri uri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+
+        boolean success = true;
+        if (!storageDir.exists()) {
+            success = storageDir.mkdirs();
+        }
+
+        if (success) {
+            File imageFile = new File(storageDir, imageFileName);
+            String savedImagePath = imageFile.getAbsolutePath();
+            try {
+                assert uri != null;
+                OutputStream fOut = getContentResolver().openOutputStream(uri);
+                assert fOut != null;
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fOut);
+                fOut.close();
+            } catch (Exception e) {
+                return null;
+            }
+
+            // Add the image to the system gallery
+            Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+            File f = new File(savedImagePath);
+            Uri contentUri = Uri.fromFile(f);
+            mediaScanIntent.setData(contentUri);
+            context.sendBroadcast(mediaScanIntent);
+
+            return contentUri.toString();
+        }
+        return null;
     }
 
     private void updateRecipeDetails(Recipe recipe) {

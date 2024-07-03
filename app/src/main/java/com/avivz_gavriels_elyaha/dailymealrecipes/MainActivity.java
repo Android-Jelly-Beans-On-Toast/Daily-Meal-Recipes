@@ -10,9 +10,11 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SearchView;
+import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -32,6 +34,8 @@ import com.avivz_gavriels_elyaha.dailymealrecipes.notification.Scheduler;
 public class MainActivity extends AppCompatActivity implements RecipeAdapter.OnItemClickListener {
 
     private SharedPreferences sp;
+    ArrayList<Recipe> previousMealsRecipeList;
+    ArrayList<Recipe> criteriaMealsRecipeList;
     // await the camera result and if its successful open the Recipe Activity
     private final ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -80,8 +84,18 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.OnI
         updateRecyclerViews();
     }
 
+    @Override
+    protected void onResumeFragments() {
+        super.onResumeFragments();
+        try (DatabaseHelper database = new DatabaseHelper(this)) {
+            // update the adapters with new data if settings were changed
+            updateRecipes(database);
+        }
+    }
+
     private int getNumRecentRecipes() {
-        String recentRecipesSp = sp.getString("recipeHistory", "5");
+        sp = getSharedPreferences("settings", MODE_PRIVATE);
+        String recentRecipesSp = sp.getString("recentHistory", "5");
         if (recentRecipesSp.equals("All")) {
             return -1;
         }
@@ -101,19 +115,13 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.OnI
         RecyclerView criteriaMealsRecyclerView = findViewById(R.id.criteriaMealsRecyclerView);
         previousMealsRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         criteriaMealsRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        previousMealsRecyclerView.setNestedScrollingEnabled(false);
+        criteriaMealsRecyclerView.setNestedScrollingEnabled(false);
 
         // get recipe lists with data from database and add to adapters
         try (DatabaseHelper database = new DatabaseHelper(this)) {
             // get info from settings in shared preferences
-            sp = getSharedPreferences("settings", MODE_PRIVATE);
-            boolean isKosher = sp.getBoolean("kosher", false);
-            boolean isQuick = sp.getBoolean("quick", false);
-            boolean isLowCalories = sp.getBoolean("lowCalories", false);
-            int numRecentRecipes = getNumRecentRecipes();
-
-            // get recipes from database
-            ArrayList<Recipe> previousMealsRecipeList = database.getRecipes(numRecentRecipes, false, false, false);
-            ArrayList<Recipe> criteriaMealsRecipeList = database.getRecipes(numRecentRecipes, isKosher, isQuick, isLowCalories);
+            updateRecipes(database);
 
             // create and set adapters
             RecipeAdapter previousMealsRecipeAdapter = new RecipeAdapter(this, previousMealsRecipeList, this);
@@ -122,6 +130,35 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.OnI
             criteriaMealsRecyclerView.setAdapter(criteriaMealsRecipeAdapter);
         }
     }
+
+    private void updateRecipes(DatabaseHelper database) {
+        sp = getSharedPreferences("settings", MODE_PRIVATE);
+        boolean isKosher = sp.getBoolean("kosher", false);
+        boolean isQuick = sp.getBoolean("quick", false);
+        boolean isLowCalories = sp.getBoolean("lowCalories", false);
+        int numRecentRecipes = getNumRecentRecipes();
+
+        // get recipes from database
+        previousMealsRecipeList = database.getRecipes(numRecentRecipes, false, false, false);
+        criteriaMealsRecipeList = database.getRecipes(numRecentRecipes, isKosher, isQuick, isLowCalories);
+
+        // update recentMealsEmpty TextView's text
+        TextView recentMealsEmpty = findViewById(R.id.recentMealsEmpty);
+        if (previousMealsRecipeList.isEmpty()) {
+            recentMealsEmpty.setVisibility(View.VISIBLE);
+        } else {
+            recentMealsEmpty.setVisibility(View.INVISIBLE);
+        }
+
+        // update criteriaMealsEmpty TextView's text
+        TextView criteriaMealsEmpty = findViewById(R.id.criteriaMealsEmpty);
+        if (criteriaMealsRecipeList.isEmpty()) {
+            criteriaMealsEmpty.setVisibility(View.VISIBLE);
+        } else {
+            criteriaMealsEmpty.setVisibility(View.INVISIBLE);
+        }
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

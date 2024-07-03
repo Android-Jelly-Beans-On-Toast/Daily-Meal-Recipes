@@ -48,6 +48,8 @@
     <string name="capture_meal">Take a picture</string>
     <string name="search_meal">I want to eat…</string>
     <string name="content_description_image">Meal image</string>
+    <string name="criteria_empty_text">There are no recipes that fit the criteria (adjustable in settings).</string>
+    <string name="recent_empty_text">Your recipe history is empty</string>
 
 
 </resources>

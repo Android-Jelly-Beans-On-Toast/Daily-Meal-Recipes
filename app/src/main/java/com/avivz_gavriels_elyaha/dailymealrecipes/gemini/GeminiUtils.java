@@ -178,18 +178,16 @@ public class GeminiUtils {
     private void searchImage(String query, searchImageCallback callback) {
         Executor executor = Executors.newSingleThreadExecutor();
         executor.execute(() -> {
-            String accessKey = BuildConfig.UNSPLASH_KEY;
+            String apiKey = BuildConfig.GOOGLE_API_KEY;
+            String cx = BuildConfig.GOOGLE_CX;
 
-            // TODO: change to google api
-            String urlString = "https://api.unsplash.com/search/photos?query=" + query;
+            String urlString = "https://www.googleapis.com/customsearch/v1?q=" + query + "&cx=" + cx + "&key=" + apiKey + "&searchType=image&num=1";
             Bitmap bitmap = null;
-            // send http request to unsplash api
             HttpURLConnection urlConnection = null;
             try {
                 URL url = new URL(urlString);
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
-                urlConnection.setRequestProperty("Authorization", "Client-ID " + accessKey);
                 urlConnection.connect();
 
                 InputStream inputStream = urlConnection.getInputStream();
@@ -201,13 +199,12 @@ public class GeminiUtils {
                 }
 
                 JsonObject jsonObject = JsonParser.parseString(result.toString()).getAsJsonObject();
-                JsonArray results = jsonObject.getAsJsonArray("results");
+                JsonArray items = jsonObject.getAsJsonArray("items");
                 String imageUrl = "";
-                if (!results.isEmpty()) {
-                    JsonObject firstResult = results.get(0).getAsJsonObject();
-                    imageUrl = firstResult.getAsJsonObject("urls").get("regular").getAsString();
+                if (!items.isEmpty()) {
+                    JsonObject firstItem = items.get(0).getAsJsonObject();
+                    imageUrl = firstItem.get("link").getAsString();
                 }
-                // Fetch the image from the URL
                 if (!imageUrl.isEmpty()) {
                     InputStream imageStream = new URL(imageUrl).openStream();
                     bitmap = BitmapFactory.decodeStream(imageStream);

@@ -1,24 +1,17 @@
 package com.avivz_gavriels_elyaha.dailymealrecipes.database;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
-
-import com.avivz_gavriels_elyaha.dailymealrecipes.R;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.Serializable;
-import java.nio.file.Files;
 import java.util.Date;
 
 public class Recipe implements Serializable {
@@ -151,39 +144,6 @@ public class Recipe implements Serializable {
         } catch (IOException e) {
             return null;
         }
-    }
-
-    public String saveImageToGallery(Bitmap bitmap, Context context) {
-        String imageFileName = "food_image_" + this.id + ".jpg";
-        String appName = context.getResources().getString(R.string.app_name_no_spaces);
-        File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/" + appName);
-
-        boolean success = true;
-        if (!storageDir.exists()) {
-            success = storageDir.mkdirs();
-        }
-
-        if (success) {
-            File imageFile = new File(storageDir, imageFileName);
-            String savedImagePath = imageFile.getAbsolutePath();
-            try {
-                OutputStream fOut = Files.newOutputStream(imageFile.toPath());
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fOut);
-                fOut.close();
-            } catch (Exception e) {
-                return null;
-            }
-
-            // Add the image to the system gallery
-            Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-            File f = new File(savedImagePath);
-            Uri contentUri = Uri.fromFile(f);
-            mediaScanIntent.setData(contentUri);
-            context.sendBroadcast(mediaScanIntent);
-
-            return contentUri.toString();
-        }
-        return null;
     }
 
     public String getCalories() {

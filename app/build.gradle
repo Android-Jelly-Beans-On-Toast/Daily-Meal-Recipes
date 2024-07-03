@@ -35,9 +35,11 @@ android {
             }
         }
         def apiKey = localProperties.getProperty("apiKey")
-        def unsplashKey = localProperties.getProperty("unsplashKey")
+        def googleSearchApiKey = localProperties.getProperty("googleSearchApiKey")
+        def googleCx = localProperties.getProperty("googleCx")
         buildConfigField("String", "API_KEY", "\"${apiKey}\"")
-        buildConfigField("String", "UNSPLASH_KEY", "\"${unsplashKey}\"")
+        buildConfigField("String", "GOOGLE_API_KEY", "\"${googleSearchApiKey}\"")
+        buildConfigField("String", "GOOGLE_CX", "\"${googleCx}\"")
 
     }
 
