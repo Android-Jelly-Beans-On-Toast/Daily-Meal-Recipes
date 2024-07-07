@@ -1,5 +1,6 @@
 package com.avivz_gavriels_elyaha.dailymealrecipes.notification;
 
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -7,6 +8,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.IBinder;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
@@ -23,6 +25,7 @@ import java.util.Date;
 
 public class RecipeGenerationService extends Service {
     private static final String CHANNEL_ID = "RecipeNotificationChannel";
+    private static final String CHANNEL_NAME = "Recipe Notifications";
     private static final int NOTIFICATION_ID = 1;
 
     public String getMealTypeByHour(Date date) {
@@ -38,11 +41,14 @@ public class RecipeGenerationService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.d("mylog", "onStartCommand");
+        RecipeGenerationService that = this;
         GeminiUtils geminiUtils = GeminiUtilsFactory.createGeminiUtils(this);
         geminiUtils.generateRecipeFromText(this.getMealTypeByHour(new Date()), new GeminiCallback() {
             @Override
             public void onSuccess(Recipe result, Bitmap image) {
-                notifyUser(result);
+                that.createNotificationChannel();
+                that.showNotification(result);
                 stopSelf();
             }
 
@@ -51,6 +57,7 @@ public class RecipeGenerationService extends Service {
                 stopSelf();
             }
         });
+        Scheduler.scheduleDailyService(this);
         return START_NOT_STICKY;
     }
 
@@ -84,13 +91,30 @@ public class RecipeGenerationService extends Service {
     }
 
     private void createNotificationChannel() {
-        CharSequence name = "Recipe Notifications";
-        String description = "Channel for recipe notifications";
-        int importance = NotificationManager.IMPORTANCE_HIGH;
-        NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
-        channel.setDescription(description);
+        if (this.isNotificationChannelCreated())
+            return;
         NotificationManager notificationManager = getSystemService(NotificationManager.class);
-        notificationManager.createNotificationChannel(channel);
+        NotificationChannel notificationChannel = new NotificationChannel(
+                CHANNEL_ID, // Constant for Channel ID
+                CHANNEL_NAME, // Constant for Channel NAME
+                NotificationManager.IMPORTANCE_DEFAULT);
+        notificationManager.createNotificationChannel(notificationChannel);
+    }
+
+    private void showNotification(Recipe recipe) {
+        NotificationManager notificationManager = getSystemService(NotificationManager.class);
+        Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setSmallIcon(R.drawable.logo)
+                .setContentTitle("your next recipe is ready!")
+                .setContentText(recipe.getTitle())
+                .build();
+        notificationManager.notify(NOTIFICATION_ID, notification);
+    }
+
+    public boolean isNotificationChannelCreated() {
+        NotificationManager notificationManager = getSystemService(NotificationManager.class);
+        NotificationChannel channel = notificationManager.getNotificationChannel(CHANNEL_ID);
+        return channel != null;
     }
 }
 

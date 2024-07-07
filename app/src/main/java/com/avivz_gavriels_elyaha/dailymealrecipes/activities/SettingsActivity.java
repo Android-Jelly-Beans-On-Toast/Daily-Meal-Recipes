@@ -11,6 +11,7 @@ import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.avivz_gavriels_elyaha.dailymealrecipes.R;
+import com.avivz_gavriels_elyaha.dailymealrecipes.notification.Scheduler;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 public class SettingsActivity extends AppCompatActivity {
@@ -55,6 +56,7 @@ public class SettingsActivity extends AppCompatActivity {
                 setTimePickerText(timePicker, hourOfDay, minute);
             }, 0, 0, true);
             clockPicker.show();
+            Scheduler.scheduleDailyService(that);
         });
         timePicker.setEnabled(sp.getBoolean("notification", false));
 
@@ -69,6 +71,7 @@ public class SettingsActivity extends AppCompatActivity {
 
             // enable/disable notification time
             timePicker.setEnabled(state);
+            Scheduler.scheduleDailyService(that);
         });
 
         // enable kosher switch
