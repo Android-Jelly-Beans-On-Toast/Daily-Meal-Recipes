@@ -43,7 +43,6 @@ public class Recipe implements Serializable {
         String[] tempIngredients = null;
         String[] tempInstructions = null;
         Date tempDateOfCreation = new Date(); // default to current date
-        // TODO: add kosher, quick, lowCalories here from json (change gemini prompt)
         boolean tempKosher = sp.getBoolean("kosher", false);
         boolean tempQuick = sp.getBoolean("quick", false);
         boolean tempLowCalories = sp.getBoolean("lowCalories", false);
