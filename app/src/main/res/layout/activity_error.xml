@@ -11,9 +11,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginStart="40dp"
         android:layout_marginTop="30dp"
-        android:layout_marginEnd="40dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -25,7 +23,9 @@
             android:id="@+id/textView11"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
             android:layout_marginTop="20dp"
+            android:layout_marginEnd="30dp"
             android:fontFamily="sans-serif-smallcaps"
             android:gravity="center"
             android:text="@string/recipe_error_title"
@@ -35,19 +35,21 @@
             android:id="@+id/errorContent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="casual"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:fontFamily="sans-serif-black"
             android:gravity="center"
             android:paddingTop="60dp"
             android:text="@string/error_message_default"
-            android:textSize="24sp" />
+            android:textSize="30sp" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/recipe_error_try_again_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="80dp"
-            android:layout_marginEnd="20dp"
+            android:layout_marginStart="50dp"
+            android:layout_marginTop="60dp"
+            android:layout_marginEnd="50dp"
             android:background="@drawable/recipe_error_main_menu_background"
             android:text="@string/recipe_error_try_again" />
 
@@ -55,9 +57,9 @@
             android:id="@+id/recipe_error_main_menu_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
+            android:layout_marginStart="50dp"
             android:layout_marginTop="30dp"
-            android:layout_marginEnd="20dp"
+            android:layout_marginEnd="50dp"
             android:background="@drawable/recipe_error_try_again_background"
             android:text="@string/recipe_error_main_screen"
             android:textColor="#3A3A3A" />

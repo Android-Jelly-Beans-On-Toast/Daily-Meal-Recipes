@@ -38,6 +38,8 @@ public class ErrorActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_error);
 
+        setTitle("Error");
+
         // get error message and set it to the error message the user sees
         String errorMessage = getIntent().getStringExtra("errorMessage");
         if (errorMessage != null && !errorMessage.isEmpty()) {

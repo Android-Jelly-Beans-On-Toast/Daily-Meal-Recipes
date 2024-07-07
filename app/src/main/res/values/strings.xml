@@ -38,7 +38,7 @@
     <string name="recipe_error_title">Something went wrong :(</string>
     <string name="error_message_default">Sorry, an unexpected error has occurred.\nPlease try again.</string>
     <string name="error_message_bad_image">Sorry, we were unable to find a recipe for the captured image.\nPlease try again.</string>
-    <string name="error_message_no_internet">Sorry, it seems you don\'t have an internet connection.\nPlease restore your connection and try again.</string>
+    <string name="error_message_no_internet">It seems you don\'t have an internet connection.\nPlease restore your connection and try again.</string>
     <string name="error_message_no_recipe">Sorry, we were unable to retrieve the information for this recipe.\nPlease try again.</string>
     <string name="error_message_bad_query">Sorry, we were unable to generate a recipe for the requested meal.\nPlease try again.</string>
     <string name="recipe_error_try_again">Try Again</string>

@@ -1,4 +1,4 @@
-package com.avivz_gavriels_elyaha.dailymealrecipes.custom_views;
+package com.avivz_gavriels_elyaha.dailymealrecipes;
 
 import android.content.Context;
 import android.util.AttributeSet;

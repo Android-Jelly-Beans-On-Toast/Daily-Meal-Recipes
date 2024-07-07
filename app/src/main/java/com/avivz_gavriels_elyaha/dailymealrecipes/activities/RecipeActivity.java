@@ -17,7 +17,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.avivz_gavriels_elyaha.dailymealrecipes.R;
-import com.avivz_gavriels_elyaha.dailymealrecipes.custom_views.NonScrollableListView;
+import com.avivz_gavriels_elyaha.dailymealrecipes.NonScrollableListView;
 import com.avivz_gavriels_elyaha.dailymealrecipes.database.DatabaseHelper;
 import com.avivz_gavriels_elyaha.dailymealrecipes.database.Recipe;
 import com.avivz_gavriels_elyaha.dailymealrecipes.gemini.GeminiCallback;
@@ -26,6 +26,7 @@ import com.avivz_gavriels_elyaha.dailymealrecipes.gemini.GeminiUtilsFactory;
 
 import java.io.File;
 import java.io.OutputStream;
+import java.net.UnknownHostException;
 
 public class RecipeActivity extends AppCompatActivity {
 
@@ -38,7 +39,7 @@ public class RecipeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe);
 
-        setTitle("Recipe from image");
+        setTitle("Loading Recipe...");
 
         // show progress bar to the user
         progressBar = findViewById(R.id.loading_layout);
@@ -79,8 +80,12 @@ public class RecipeActivity extends AppCompatActivity {
 
                 @Override
                 public void onFailure(Throwable throwable) {
+                    if (throwable.getCause() instanceof UnknownHostException) {
+                        errorMessage = getString(R.string.error_message_no_internet);
+                    } else {
+                        errorMessage = getString(R.string.error_message_bad_query);
+                    }
                     Intent intent = new Intent(RecipeActivity.this, ErrorActivity.class);
-                    errorMessage = getString(R.string.error_message_bad_query);
                     intent.putExtra("errorMessage", errorMessage);
                     startActivity(intent);
                     hideProgressBar(progressBar);
@@ -112,8 +117,12 @@ public class RecipeActivity extends AppCompatActivity {
 
                 @Override
                 public void onFailure(Throwable throwable) {
+                    if (throwable.getCause() instanceof UnknownHostException) {
+                        errorMessage = getString(R.string.error_message_no_internet);
+                    } else {
+                        errorMessage = getString(R.string.error_message_bad_image);
+                    }
                     Intent intent = new Intent(RecipeActivity.this, ErrorActivity.class);
-                    errorMessage = getString(R.string.error_message_bad_image);
                     intent.putExtra("errorMessage", errorMessage);
                     startActivity(intent);
                     hideProgressBar(progressBar);
@@ -130,9 +139,9 @@ public class RecipeActivity extends AppCompatActivity {
             return;
         }
 
-        // if this code is reached, an error occurred
+        // if this code is reached, an unexpected error occurred
         Intent intent = new Intent(RecipeActivity.this, ErrorActivity.class);
-        errorMessage = getString(R.string.error_message_no_recipe);
+        errorMessage = getString(R.string.error_message_default);
         intent.putExtra("errorMessage", errorMessage);
         startActivity(intent);
         hideProgressBar(progressBar);
@@ -197,7 +206,9 @@ public class RecipeActivity extends AppCompatActivity {
         recipeDetailsView.setAdapter(recipeAdapter);
 
         // recipe title
-        setTitle(recipe.getTitle());
+        TextView recipeTitle = findViewById(R.id.recipeTitle);
+        recipeTitle.setText(recipe.getTitle());
+        setTitle("Recipe");
 
         // recipe calories
         TextView recipeCaloriesView = findViewById(R.id.recipeCalories);

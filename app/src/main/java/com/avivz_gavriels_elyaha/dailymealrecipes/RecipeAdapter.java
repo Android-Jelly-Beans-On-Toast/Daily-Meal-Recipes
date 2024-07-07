@@ -1,4 +1,4 @@
-package com.avivz_gavriels_elyaha.dailymealrecipes.activities;
+package com.avivz_gavriels_elyaha.dailymealrecipes;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -10,7 +10,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.avivz_gavriels_elyaha.dailymealrecipes.R;
 import com.avivz_gavriels_elyaha.dailymealrecipes.database.Recipe;
 
 import java.util.List;

@@ -1,12 +1,18 @@
 package com.avivz_gavriels_elyaha.dailymealrecipes.activities;
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,10 +28,13 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.avivz_gavriels_elyaha.dailymealrecipes.ConnectivityReceiver;
 import com.avivz_gavriels_elyaha.dailymealrecipes.R;
+import com.avivz_gavriels_elyaha.dailymealrecipes.RecipeAdapter;
 import com.avivz_gavriels_elyaha.dailymealrecipes.database.DatabaseHelper;
 import com.avivz_gavriels_elyaha.dailymealrecipes.database.Recipe;
 
@@ -38,6 +47,12 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.OnI
     private SharedPreferences sp;
     ArrayList<Recipe> previousMealsRecipeList;
     ArrayList<Recipe> criteriaMealsRecipeList;
+
+    private final ConnectivityReceiver connectivityReceiver = new ConnectivityReceiver();
+    private BroadcastReceiver noInternetReceiver;
+    private BroadcastReceiver internetRestoredReceiver;
+    private AlertDialog noInternetDialog;
+    private boolean isSearchSubmitted = false;
     // await the camera result and if its successful open the Recipe Activity
     private final ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -60,7 +75,25 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.OnI
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // service
         Scheduler.scheduleDailyService(this);
+
+        // LocalBroadcastManager receiver
+        noInternetReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                showNoInternetDialog();
+            }
+        };
+
+        internetRestoredReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                dismissNoInternetDialog();
+            }
+        };
+
         ImageButton cameraButton = findViewById(R.id.buttonCamera);
         // Check if the app has permission to access the camera
         if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
@@ -86,15 +119,21 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.OnI
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                if (query != null) {
-                    // hide the keyboard
-                    InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(searchView.getWindowToken(), 0);
+
+                if (query != null && !isSearchSubmitted) {
+                    isSearchSubmitted = true;  // prevent multiple submissions
+
 
                     // launch RecipeActivity and send the search query there
                     Intent intent = new Intent(MainActivity.this, RecipeActivity.class);
                     intent.putExtra("iWantToEatText", query);
                     startActivity(intent);
+
+                    // hide the keyboard
+                    InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(searchView.getWindowToken(), 0);
+
+                    searchView.postDelayed(() -> isSearchSubmitted = false, 500);
                 }
                 return true;
             }
@@ -132,6 +171,24 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.OnI
         super.onResume();
         // update the adapters with new data
         updateRecyclerViews();
+
+        // register connectivity receiver
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(connectivityReceiver, filter);
+
+        // register no internet receiver to show dialog when there is no internet connection
+        LocalBroadcastManager.getInstance(this).registerReceiver(noInternetReceiver, new IntentFilter("NO_INTERNET_CONNECTION"));
+        LocalBroadcastManager.getInstance(this).registerReceiver(internetRestoredReceiver, new IntentFilter("INTERNET_CONNECTION_RESTORED"));
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // unregister connectivity receiver
+        unregisterReceiver(connectivityReceiver);
+        // unregister no internet receiver
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(noInternetReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(internetRestoredReceiver);
     }
 
     private void updateRecyclerViews() {
@@ -209,5 +266,25 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.OnI
         Intent intent = new Intent(this, RecipeActivity.class);
         intent.putExtra("recipe", recipe);
         startActivity(intent);
+    }
+
+    private void showNoInternetDialog() {
+        if (noInternetDialog != null && noInternetDialog.isShowing()) {
+            noInternetDialog.dismiss();
+        }
+
+        noInternetDialog = new AlertDialog.Builder(this)
+                .setTitle("No Internet Connection")
+                .setMessage("The app needs internet connection to work properly.\n\nWould you like to go to the settings to enable internet?")
+                .setPositiveButton("Settings", (dialog, which) -> startActivity(new Intent(Settings.ACTION_WIRELESS_SETTINGS)))
+                .setNegativeButton("No", null)
+                .setCancelable(false)
+                .show();
+    }
+
+    private void dismissNoInternetDialog() {
+        if (noInternetDialog != null && noInternetDialog.isShowing()) {
+            noInternetDialog.dismiss();
+        }
     }
 }
