@@ -31,6 +31,8 @@ public class RecipeActivity extends AppCompatActivity {
 
     private LinearLayout progressBar;
 
+    private String errorMessage = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,15 +50,48 @@ public class RecipeActivity extends AppCompatActivity {
         // retrieve recipe if it came from a notification or from scrolling menu in main activity
         Recipe recipe = (Recipe) getIntent().getSerializableExtra("recipe");
 
+        // retrieve "i want to eat..." text from extras
+        String iWantToEatText = getIntent().getStringExtra("iWantToEatText");
+
         // get a gemini instance
         GeminiUtils geminiUtils = GeminiUtilsFactory.createGeminiUtils(this);
 
+        // "i want to eat" text was sent from MainActivity
+        if (iWantToEatText != null && !iWantToEatText.isEmpty()) {
 
-        // update UI based on existing recipe or generate a new recipe
-        if (recipe != null) {
-            updateRecipeDetails(recipe);
-            hideProgressBar(progressBar);
-        } else {
+            // generate recipe
+            geminiUtils.generateRecipeFromText(iWantToEatText, new GeminiCallback() {
+                @Override
+                public void onSuccess(Recipe result, Bitmap image) {
+                    // insert this recipe into the database
+                    try (DatabaseHelper databaseHelper = new DatabaseHelper(RecipeActivity.this)) {
+                        long id = databaseHelper.insertRecipe(result);
+                        result.setId(id);
+                        String imageUri = saveImageToGallery(image, RecipeActivity.this, result.getId());
+                        result.setFoodImageUri(imageUri);
+                        databaseHelper.updateRecipeImageUri(id, imageUri);
+
+                    }
+                    // update UI with recipe details
+                    updateRecipeDetails(result);
+                    hideProgressBar(progressBar);
+                }
+
+                @Override
+                public void onFailure(Throwable throwable) {
+                    Intent intent = new Intent(RecipeActivity.this, ErrorActivity.class);
+                    errorMessage = getString(R.string.error_message_bad_query);
+                    intent.putExtra("errorMessage", errorMessage);
+                    startActivity(intent);
+                    hideProgressBar(progressBar);
+                    finish();
+                }
+            });
+            return;
+        }
+
+        // captured image was sent from MainActivity
+        if (capturedImage != null) {
 
             geminiUtils.generateRecipeFromImage(capturedImage, new GeminiCallback() {
                 @Override
@@ -77,13 +112,31 @@ public class RecipeActivity extends AppCompatActivity {
 
                 @Override
                 public void onFailure(Throwable throwable) {
-                    Intent intent = new Intent(RecipeActivity.this, RecipeErrorActivity.class);
+                    Intent intent = new Intent(RecipeActivity.this, ErrorActivity.class);
+                    errorMessage = getString(R.string.error_message_bad_image);
+                    intent.putExtra("errorMessage", errorMessage);
                     startActivity(intent);
                     hideProgressBar(progressBar);
                     finish();
                 }
             });
+            return;
         }
+
+        // recipe was sent from MainActivity
+        if (recipe != null) {
+            updateRecipeDetails(recipe);
+            hideProgressBar(progressBar);
+            return;
+        }
+
+        // if this code is reached, an error occurred
+        Intent intent = new Intent(RecipeActivity.this, ErrorActivity.class);
+        errorMessage = getString(R.string.error_message_no_recipe);
+        intent.putExtra("errorMessage", errorMessage);
+        startActivity(intent);
+        hideProgressBar(progressBar);
+        finish();
     }
 
     private String saveImageToGallery(Bitmap bitmap, Context context, long id) {

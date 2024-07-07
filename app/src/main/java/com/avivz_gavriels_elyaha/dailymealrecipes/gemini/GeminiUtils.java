@@ -57,7 +57,7 @@ public class GeminiUtils {
         return String.format(geminiPrompt, options);
     }
 
-    private String generatePromptForText(String mealType) {
+    private String generatePromptForText(String iWantToEatText) {
         SharedPreferences sp = context.getSharedPreferences("settings", Context.MODE_PRIVATE);
         String options = "";
         String kosher = this.context.getResources().getString(R.string.kosher);
@@ -70,7 +70,7 @@ public class GeminiUtils {
             options += quick + " ";
         if (sp.getBoolean("lowCalories", false))
             options += lowCalories + " ";
-        return String.format(geminiPrompt, options, mealType);
+        return String.format(geminiPrompt, options, iWantToEatText);
     }
 
 
@@ -122,9 +122,9 @@ public class GeminiUtils {
         }, executor);
     }
 
-    public void generateRecipeFromText(String mealType, GeminiCallback callback) {
+    public void generateRecipeFromText(String iWantToEatText, GeminiCallback callback) {
         Content content = new Content.Builder()
-                .addText(generatePromptForText(mealType))
+                .addText(generatePromptForText(iWantToEatText))
                 .build();
 
         GenerativeModelFutures model = GenerativeModelFutures.from(this.geminiModel);

@@ -56,6 +56,7 @@ public class SettingsActivity extends AppCompatActivity {
             }, 0, 0, true);
             clockPicker.show();
         });
+        timePicker.setEnabled(sp.getBoolean("notification", false));
 
         // enable notification switch
         SwitchMaterial notificationSwitch = findViewById(R.id.enableNotificationSwitch);
@@ -65,6 +66,9 @@ public class SettingsActivity extends AppCompatActivity {
             SharedPreferences.Editor editor = sp.edit();
             editor.putBoolean("notification", state);
             editor.apply();
+
+            // enable/disable notification time
+            timePicker.setEnabled(state);
         });
 
         // enable kosher switch

@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SearchView;
@@ -80,6 +81,28 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.OnI
             // Simulate click on the SearchView
             searchView.requestFocus();
             searchView.setIconified(false);
+        });
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                if (query != null) {
+                    // hide the keyboard
+                    InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(searchView.getWindowToken(), 0);
+
+                    // launch RecipeActivity and send the search query there
+                    Intent intent = new Intent(MainActivity.this, RecipeActivity.class);
+                    intent.putExtra("iWantToEatText", query);
+                    startActivity(intent);
+                }
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
         });
         // take care of horizontal scroll view
         updateRecyclerViews();
