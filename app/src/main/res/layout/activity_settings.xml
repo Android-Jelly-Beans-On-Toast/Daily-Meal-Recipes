@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SettingsActivity">
+    tools:context=".activities.SettingsActivity">
 
     <TableLayout
         android:layout_width="0dp"
@@ -61,8 +61,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:editable="false"
-                    android:text="@string/five" />
+                    android:text="@string/five"
+                    android:hint="@string/five" />
             </com.google.android.material.textfield.TextInputLayout>
 
         </TableRow>
@@ -116,7 +116,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:backgroundTint="#48AFD5"
-                android:drawableLeft="@drawable/clock_icon"
+                android:drawableStart="@drawable/clock_icon"
                 android:gravity="center"
                 android:text="@string/pick_time" />
 

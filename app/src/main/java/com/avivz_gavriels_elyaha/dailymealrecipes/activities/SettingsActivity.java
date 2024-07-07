@@ -1,4 +1,4 @@
-package com.avivz_gavriels_elyaha.dailymealrecipes;
+package com.avivz_gavriels_elyaha.dailymealrecipes.activities;
 
 import android.app.TimePickerDialog;
 import android.content.SharedPreferences;
@@ -10,6 +10,7 @@ import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.avivz_gavriels_elyaha.dailymealrecipes.R;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 public class SettingsActivity extends AppCompatActivity {

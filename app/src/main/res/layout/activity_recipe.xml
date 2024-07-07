@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/recipe"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".RecipeActivity">
-    <!--    app:layoutDescription="@xml/recipe_activity_scene"-->
+    tools:context=".activities.RecipeActivity">
 
     <ScrollView
         android:id="@+id/scrollView2"
@@ -50,12 +48,10 @@
                     android:text="@string/recipe_ingredients"
                     android:textSize="42sp" />
 
-                <TextView
+                <com.avivz_gavriels_elyaha.dailymealrecipes.custom_views.NonScrollableListView
                     android:id="@+id/ingredientsDetails"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="10dp"
-                    android:textSize="20sp" />
+                    android:layout_height="wrap_content" />
 
                 <TextView
                     android:id="@+id/recpieTitle"
@@ -66,12 +62,11 @@
                     android:text="@string/recipe_recipe"
                     android:textSize="42sp" />
 
-                <TextView
+                <com.avivz_gavriels_elyaha.dailymealrecipes.custom_views.NonScrollableListView
                     android:id="@+id/recipeDetails"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="10dp"
-                    android:textSize="20sp" />
+                    android:layout_height="wrap_content" />
+
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

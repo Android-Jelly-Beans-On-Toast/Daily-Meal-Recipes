@@ -1,4 +1,4 @@
-package com.avivz_gavriels_elyaha.dailymealrecipes;
+package com.avivz_gavriels_elyaha.dailymealrecipes.activities;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -9,6 +9,8 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
+
+import com.avivz_gavriels_elyaha.dailymealrecipes.R;
 
 public class RecipeErrorActivity extends AppCompatActivity {
 

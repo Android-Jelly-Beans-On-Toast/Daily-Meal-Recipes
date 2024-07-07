@@ -1,4 +1,4 @@
-package com.avivz_gavriels_elyaha.dailymealrecipes;
+package com.avivz_gavriels_elyaha.dailymealrecipes.activities;
 
 import android.Manifest;
 import android.content.Intent;
@@ -24,6 +24,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.avivz_gavriels_elyaha.dailymealrecipes.R;
 import com.avivz_gavriels_elyaha.dailymealrecipes.database.DatabaseHelper;
 import com.avivz_gavriels_elyaha.dailymealrecipes.database.Recipe;
 
@@ -164,7 +165,6 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.OnI
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
         MenuItem settingsMenuItem = menu.add("Settings");
-        // TODO: do something with menuItem2
         MenuItem exitMenuItem = menu.add("Exit");
         MainActivity that = this;
         settingsMenuItem.setOnMenuItemClickListener(item -> {

@@ -12,7 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
 import com.avivz_gavriels_elyaha.dailymealrecipes.R;
-import com.avivz_gavriels_elyaha.dailymealrecipes.RecipeActivity;
+import com.avivz_gavriels_elyaha.dailymealrecipes.activities.RecipeActivity;
 import com.avivz_gavriels_elyaha.dailymealrecipes.database.Recipe;
 import com.avivz_gavriels_elyaha.dailymealrecipes.gemini.GeminiCallback;
 import com.avivz_gavriels_elyaha.dailymealrecipes.gemini.GeminiUtils;
@@ -43,7 +43,6 @@ public class RecipeGenerationService extends Service {
             @Override
             public void onSuccess(Recipe result, Bitmap image) {
                 notifyUser(result);
-                // TODO: maybe save image here?
                 stopSelf();
             }
 

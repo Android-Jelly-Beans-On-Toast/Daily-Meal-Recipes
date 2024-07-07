@@ -1,4 +1,4 @@
-package com.avivz_gavriels_elyaha.dailymealrecipes;
+package com.avivz_gavriels_elyaha.dailymealrecipes.activities;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -9,12 +9,15 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.avivz_gavriels_elyaha.dailymealrecipes.R;
+import com.avivz_gavriels_elyaha.dailymealrecipes.custom_views.NonScrollableListView;
 import com.avivz_gavriels_elyaha.dailymealrecipes.database.DatabaseHelper;
 import com.avivz_gavriels_elyaha.dailymealrecipes.database.Recipe;
 import com.avivz_gavriels_elyaha.dailymealrecipes.gemini.GeminiCallback;
@@ -131,12 +134,14 @@ public class RecipeActivity extends AppCompatActivity {
         generatedImageView.setImageBitmap(recipe.getFoodImage(RecipeActivity.this));
 
         // ingredients
-        TextView ingredientsDetailsView = findViewById(R.id.ingredientsDetails);
-        ingredientsDetailsView.setText(concatenateArray(recipe.getIngredients()));
+        NonScrollableListView ingredientsDetailsView = findViewById(R.id.ingredientsDetails);
+        ArrayAdapter<String> ingredientsAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, recipe.getIngredients());
+        ingredientsDetailsView.setAdapter(ingredientsAdapter);
 
         // recipe details
-        TextView recipeDetailsView = findViewById(R.id.recipeDetails);
-        recipeDetailsView.setText(concatenateArray(recipe.getInstructions()));
+        NonScrollableListView recipeDetailsView = findViewById(R.id.recipeDetails);
+        ArrayAdapter<String> recipeAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, recipe.getInstructions());
+        recipeDetailsView.setAdapter(recipeAdapter);
 
         // recipe title
         setTitle(recipe.getTitle());
@@ -144,18 +149,6 @@ public class RecipeActivity extends AppCompatActivity {
         // recipe calories
         TextView recipeCaloriesView = findViewById(R.id.recipeCalories);
         recipeCaloriesView.setText(String.format("Estimated Calories: %s", recipe.getCalories()));
-    }
-
-    private String concatenateArray(String[] array) {
-        if (array == null) {
-            return "";
-        }
-
-        StringBuilder concatenated = new StringBuilder();
-        for (String ingredient : array) {
-            concatenated.append("• ").append(ingredient).append("\n");
-        }
-        return concatenated.toString().trim();
     }
 
     // function to show progress bar to the user
