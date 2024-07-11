@@ -40,8 +40,6 @@ import com.avivz_gavriels_elyaha.dailymealrecipes.database.Recipe;
 
 import java.util.ArrayList;
 
-import com.avivz_gavriels_elyaha.dailymealrecipes.notification.Scheduler;
-
 public class MainActivity extends AppCompatActivity implements RecipeAdapter.OnItemClickListener {
 
     private SharedPreferences sp;
@@ -75,9 +73,6 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.OnI
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        // service
-        Scheduler.scheduleDailyService(this);
 
         // LocalBroadcastManager receiver
         noInternetReceiver = new BroadcastReceiver() {

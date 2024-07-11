@@ -14,10 +14,9 @@ import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.avivz_gavriels_elyaha.dailymealrecipes.R;
-import com.avivz_gavriels_elyaha.dailymealrecipes.notification.MyRecipeGenerationService;
+import com.avivz_gavriels_elyaha.dailymealrecipes.notification.RecipeGenerationService;
+import com.avivz_gavriels_elyaha.dailymealrecipes.notification.NotificationScheduler;
 import com.google.android.material.switchmaterial.SwitchMaterial;
-
-import java.util.Calendar;
 
 public class SettingsActivity extends AppCompatActivity {
     private SharedPreferences sp;
@@ -120,34 +119,12 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     public void setDailyAlarm() {
-        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-        Intent intent = new Intent(this, MyRecipeGenerationService.class);
-        PendingIntent pendingIntent = PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        int hour = sp.getInt("timerHour", 0);
-        int minute = sp.getInt("timerMinute", 0);
-
-        Log.d("SettingsActivity", "Timer Hour: " + hour);
-        Log.d("SettingsActivity", "Timer Minute: " + minute);
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, hour);
-        calendar.set(Calendar.MINUTE, minute);
-        calendar.set(Calendar.SECOND, 0);
-
-        if (calendar.getTimeInMillis() < System.currentTimeMillis()) {
-            calendar.add(Calendar.DAY_OF_YEAR, 1);
-        }
-
-        Log.d("SettingsActivity", "Alarm set for: " + calendar.getTime());
-
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
-                AlarmManager.INTERVAL_DAY, pendingIntent);
+        NotificationScheduler.scheduleDailyNotification(this);
     }
 
     private void cancelDailyAlarm() {
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-        Intent intent = new Intent(this, MyRecipeGenerationService.class);
+        Intent intent = new Intent(this, RecipeGenerationService.class);
         PendingIntent pendingIntent = PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         if (alarmManager != null) {

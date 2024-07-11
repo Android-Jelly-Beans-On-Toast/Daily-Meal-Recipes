@@ -47,10 +47,12 @@
             android:exported="true" />
 
         <service
-            android:name=".notification.MyRecipeGenerationService"
+            android:name=".notification.RecipeGenerationService"
             android:enabled="true"
             android:exported="false" />
-        
+
+        <receiver android:name=".notification.NotificationReceiver" />
+
     </application>
 
 </manifest>

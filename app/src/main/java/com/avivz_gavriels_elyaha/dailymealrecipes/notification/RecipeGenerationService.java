@@ -1,65 +1,29 @@
 package com.avivz_gavriels_elyaha.dailymealrecipes.notification;
 
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
+import android.os.Environment;
 import android.os.IBinder;
+import android.provider.MediaStore;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
-import androidx.core.app.NotificationCompat;
 
 import com.avivz_gavriels_elyaha.dailymealrecipes.R;
-import com.avivz_gavriels_elyaha.dailymealrecipes.activities.RecipeActivity;
+import com.avivz_gavriels_elyaha.dailymealrecipes.database.DatabaseHelper;
 import com.avivz_gavriels_elyaha.dailymealrecipes.database.Recipe;
 import com.avivz_gavriels_elyaha.dailymealrecipes.gemini.GeminiCallback;
 import com.avivz_gavriels_elyaha.dailymealrecipes.gemini.GeminiUtils;
 import com.avivz_gavriels_elyaha.dailymealrecipes.gemini.GeminiUtilsFactory;
 
-import java.util.Calendar;
-import java.util.Date;
+import java.io.File;
+import java.io.OutputStream;
 
 public class RecipeGenerationService extends Service {
-    private static final String CHANNEL_ID = "RecipeNotificationChannel";
-    private static final String CHANNEL_NAME = "Recipe Notifications";
-    private static final int NOTIFICATION_ID = 1;
-
-    public String getMealTypeByHour(Date date) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
-        int hour = calendar.get(Calendar.HOUR_OF_DAY);
-        if (hour >= 6 && hour < 12)
-            return "breakfast";
-        if (hour >= 12 && hour < 18)
-            return "lunch";
-        return "dinner";
-    }
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d("mylog", "onStartCommand");
-        RecipeGenerationService that = this;
-        GeminiUtils geminiUtils = GeminiUtilsFactory.createGeminiUtils(this);
-        geminiUtils.generateRecipeFromText(this.getMealTypeByHour(new Date()), new GeminiCallback() {
-            @Override
-            public void onSuccess(Recipe result, Bitmap image) {
-                that.createNotificationChannel();
-                that.showNotification(result);
-                stopSelf();
-            }
-
-            @Override
-            public void onFailure(Throwable throwable) {
-                stopSelf();
-            }
-        });
-        Scheduler.scheduleDailyService(this);
-        return START_NOT_STICKY;
-    }
 
     @Nullable
     @Override
@@ -67,54 +31,95 @@ public class RecipeGenerationService extends Service {
         return null;
     }
 
-    private void notifyUser(Recipe result) {
-        createNotificationChannel();
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        // Perform the gemini prompt calculation in a background thread
+        Log.d("MyRecipeGenerationService", "Starting recipe generation");
+        new Thread(() -> {
+            try {
+                GeminiUtils geminiUtils = GeminiUtilsFactory.createGeminiUtils(this);
 
-        Intent intent = new Intent(this, RecipeActivity.class);
-        intent.putExtra("meal", (CharSequence) result);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                geminiUtils.generateRecipeForNotification(new GeminiCallback() {
+                    @Override
+                    public void onSuccess(Recipe result, Bitmap image) {
+                        Log.d("MyRecipeGenerationService", "Recipe generation success");
+                        sendNotification("Here's your recipe for today!", result.getTitle(), result, image);
+                    }
 
-        Bitmap foodImage = result.getFoodImage(this); // Assuming getFoodImage returns a Bitmap
+                    @Override
+                    public void onFailure(Throwable throwable) {
+                        Log.e("MyRecipeGenerationService", "Recipe generation failed", throwable);
+                        sendNotification("Recipe generation error", "Sorry, we couldn't generate a recipe for you today.", null, null);
+                    }
+                });
+            } catch (Exception e) {
+                Log.e("MyRecipeGenerationService", "Error performing calculation", e);
+            } finally {
+                stopSelf();
+            }
+        }).start();
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setSmallIcon(R.drawable.logo) // Your small icon resource
-                .setContentTitle(result.getTitle())
-                .setContentText("Click to see the recipe details")
-                .setLargeIcon(foodImage)
-                .setStyle(new NotificationCompat.BigPictureStyle().bigPicture(foodImage))
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setContentIntent(pendingIntent)
-                .setAutoCancel(true);
-
-        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        notificationManager.notify(NOTIFICATION_ID, builder.build());
+        return START_STICKY;
     }
 
-    private void createNotificationChannel() {
-        if (this.isNotificationChannelCreated())
-            return;
-        NotificationManager notificationManager = getSystemService(NotificationManager.class);
-        NotificationChannel notificationChannel = new NotificationChannel(
-                CHANNEL_ID, // Constant for Channel ID
-                CHANNEL_NAME, // Constant for Channel NAME
-                NotificationManager.IMPORTANCE_DEFAULT);
-        notificationManager.createNotificationChannel(notificationChannel);
+
+    private void sendNotification(String title, String message, Recipe recipe, Bitmap image) {
+        // insert this recipe into the database
+        if (recipe != null && image != null) {
+            try (DatabaseHelper databaseHelper = new DatabaseHelper(this)) {
+                long id = databaseHelper.insertRecipe(recipe);
+                recipe.setId(id);
+                String imageUri = saveImageToGallery(image, this, recipe.getId());
+                recipe.setFoodImageUri(imageUri);
+                databaseHelper.updateRecipeImageUri(id, imageUri);
+            }
+        }
+
+        // send notification
+        NotificationHelper notificationHelper = new NotificationHelper(this);
+        notificationHelper.createNotification(title, message, recipe);
     }
 
-    private void showNotification(Recipe recipe) {
-        NotificationManager notificationManager = getSystemService(NotificationManager.class);
-        Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setSmallIcon(R.drawable.logo)
-                .setContentTitle("your next recipe is ready!")
-                .setContentText(recipe.getTitle())
-                .build();
-        notificationManager.notify(NOTIFICATION_ID, notification);
-    }
+    private String saveImageToGallery(Bitmap bitmap, Context context, long id) {
+        String imageFileName = "food_image_" + id + ".jpg";
+        String appName = context.getResources().getString(R.string.app_name_no_spaces);
+        File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/" + appName);
 
-    public boolean isNotificationChannelCreated() {
-        NotificationManager notificationManager = getSystemService(NotificationManager.class);
-        NotificationChannel channel = notificationManager.getNotificationChannel(CHANNEL_ID);
-        return channel != null;
+        ContentValues values = new ContentValues();
+        values.put(MediaStore.Images.Media.DISPLAY_NAME, imageFileName);
+        values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
+        values.put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + "/DailyMealRecipes");
+
+        Uri uri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+
+        boolean success = true;
+        if (!storageDir.exists()) {
+            success = storageDir.mkdirs();
+        }
+
+        if (success) {
+            File imageFile = new File(storageDir, imageFileName);
+            String savedImagePath = imageFile.getAbsolutePath();
+            try {
+                assert uri != null;
+                OutputStream fOut = getContentResolver().openOutputStream(uri);
+                assert fOut != null;
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fOut);
+                fOut.close();
+            } catch (Exception e) {
+                return null;
+            }
+
+            // Add the image to the system gallery
+            Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+            File f = new File(savedImagePath);
+            Uri contentUri = Uri.fromFile(f);
+            mediaScanIntent.setData(contentUri);
+            context.sendBroadcast(mediaScanIntent);
+
+            return contentUri.toString();
+        }
+        return null;
     }
 }
 
