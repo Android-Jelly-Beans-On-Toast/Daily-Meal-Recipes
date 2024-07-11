@@ -57,6 +57,16 @@ public class RecipeActivity extends AppCompatActivity {
         // get a gemini instance
         GeminiUtils geminiUtils = GeminiUtilsFactory.createGeminiUtils(this);
 
+        // notification recipe and image was sent
+        Recipe notificationRecipe = (Recipe) getIntent().getSerializableExtra("notificationRecipe");
+
+        if (notificationRecipe != null) {
+            // update UI with recipe details
+            updateRecipeDetails(notificationRecipe);
+            hideProgressBar(progressBar);
+            return;
+        }
+
         // "i want to eat" text was sent from MainActivity
         if (iWantToEatText != null && !iWantToEatText.isEmpty()) {
 
