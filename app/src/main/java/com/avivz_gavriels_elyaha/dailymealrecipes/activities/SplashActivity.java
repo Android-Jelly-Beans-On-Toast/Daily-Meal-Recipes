@@ -9,7 +9,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.avivz_gavriels_elyaha.dailymealrecipes.R;
 
-//TODO: maybe fix splash screen: https://developer.android.com/develop/ui/views/launch/splash-screen
 public class SplashActivity extends AppCompatActivity {
 
     private static final long SPLASH_SCREEN_DURATION = 3000; // 3 sec
