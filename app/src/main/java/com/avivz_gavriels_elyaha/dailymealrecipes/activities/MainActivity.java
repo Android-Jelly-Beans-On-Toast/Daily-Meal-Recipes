@@ -53,8 +53,6 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.OnI
     private AlertDialog noInternetDialog;
     private boolean isSearchSubmitted = false;
 
-    private NotificationScheduler notificationScheduler;
-
     // await the camera result and if its successful open the Recipe Activity
     private final ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -94,8 +92,7 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.OnI
         };
 
         // notification scheduler
-        notificationScheduler = new NotificationScheduler(this);
-        notificationScheduler.updateNotificationScheduler();
+        NotificationScheduler.updateNotificationScheduler(this);
 
         ImageButton cameraButton = findViewById(R.id.buttonCamera);
         // Check if the app has permission to access the camera
@@ -175,13 +172,7 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.OnI
         // update the adapters with new data
         updateRecyclerViews();
 
-        // update notification scheduler
-        if (notificationScheduler != null) {
-            notificationScheduler.updateNotificationScheduler();
-        } else {
-            notificationScheduler = new NotificationScheduler(this);
-            notificationScheduler.updateNotificationScheduler();
-        }
+        NotificationScheduler.updateNotificationScheduler(this);
 
         // register connectivity receiver
         IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);

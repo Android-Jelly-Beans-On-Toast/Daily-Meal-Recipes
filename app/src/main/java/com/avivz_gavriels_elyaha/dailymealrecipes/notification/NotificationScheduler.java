@@ -20,28 +20,23 @@ import java.util.Calendar;
 
 public class NotificationScheduler {
 
-    private PendingIntent pendingIntent;
-    private AlarmManager alarmManager;
-    private final Context context;
+    private static PendingIntent pendingIntent;
+    private static AlarmManager alarmManager;
     private static final String CHANNEL_ID = "TIMED_RECIPE_CHANNEL";
     private static final String CHANNEL_NAME = "Recipe Notifications";
     private static final int NOTIFICATION_ID = 694201337;
 
-    public NotificationScheduler(Context context) {
-        this.context = context;
-        createNotificationChannel();
-    }
-
-    public void updateNotificationScheduler() {
+    public static void updateNotificationScheduler(Context context) {
         SharedPreferences sp = context.getSharedPreferences("settings", Context.MODE_PRIVATE);
         if (sp.getBoolean("notification", false)) {
-            this.scheduleDailyNotification();
+            cancelDailyNotification();
+            scheduleDailyNotification(context);
         } else {
-            this.cancelDailyNotification();
+            cancelDailyNotification();
         }
     }
 
-    private void createNotificationChannel() {
+    public static void createNotificationChannel(Context context) {
         NotificationChannel channel = new NotificationChannel(
                 CHANNEL_ID,
                 CHANNEL_NAME,
@@ -53,7 +48,7 @@ public class NotificationScheduler {
         }
     }
 
-    public void createNotification(String title, String message, Recipe recipe) {
+    public static void createNotification(String title, String message, Recipe recipe, Context context) {
         // create an Intent for MainActivity
         Intent mainIntent = new Intent(context, MainActivity.class);
         mainIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -86,12 +81,11 @@ public class NotificationScheduler {
         }
 
         // update the notification scheduler
-        NotificationScheduler notificationScheduler = new NotificationScheduler(context);
-        notificationScheduler.updateNotificationScheduler();
+        updateNotificationScheduler(context);
     }
 
-    public void scheduleDailyNotification() {
-        SharedPreferences sharedPreferences = this.context.getSharedPreferences("settings", Context.MODE_PRIVATE);
+    public static void scheduleDailyNotification(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("settings", Context.MODE_PRIVATE);
         int hour = sharedPreferences.getInt("timerHour", 12);
         int minute = sharedPreferences.getInt("timerMinute", 0);
 
@@ -108,14 +102,14 @@ public class NotificationScheduler {
         Log.d("NotificationScheduler", "current time: " + Calendar.getInstance().getTime());
         Log.d("NotificationScheduler", "set time: " + calendar.getTime());
 
-        Intent intent = new Intent(this.context, NotificationReceiver.class);
-        pendingIntent = PendingIntent.getBroadcast(this.context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        Intent intent = new Intent(context, NotificationReceiver.class);
+        pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        alarmManager = (AlarmManager) this.context.getSystemService(Context.ALARM_SERVICE);
+        alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
     }
 
-    public void cancelDailyNotification() {
+    public static void cancelDailyNotification() {
         if (alarmManager != null && pendingIntent != null) {
             alarmManager.cancel(pendingIntent);
         }

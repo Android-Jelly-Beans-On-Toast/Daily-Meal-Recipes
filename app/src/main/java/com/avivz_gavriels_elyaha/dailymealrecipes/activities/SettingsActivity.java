@@ -46,9 +46,9 @@ public class SettingsActivity extends AppCompatActivity {
         // set time picker text from shared preferences
         setTimePickerText(timePicker, sp.getInt("timerHour", 0), sp.getInt("timerMinute", 0));
 
-        // setup notification scheduler
-        NotificationScheduler notificationScheduler = new NotificationScheduler(this);
-        notificationScheduler.updateNotificationScheduler();
+        // update notification scheduler
+        NotificationScheduler.createNotificationChannel(this);
+        NotificationScheduler.updateNotificationScheduler(this);
 
         timePicker.setOnClickListener(v -> {
             Log.d("at onClick", "my log");
@@ -60,7 +60,7 @@ public class SettingsActivity extends AppCompatActivity {
                 setTimePickerText(timePicker, hourOfDay, minute);
 
                 // update notification manager
-                notificationScheduler.updateNotificationScheduler();
+                NotificationScheduler.updateNotificationScheduler(this);
             }, 0, 0, true);
             clockPicker.show();
         });
@@ -79,7 +79,7 @@ public class SettingsActivity extends AppCompatActivity {
             timePicker.setEnabled(state);
 
             // update notification scheduler
-            notificationScheduler.updateNotificationScheduler();
+            NotificationScheduler.updateNotificationScheduler(this);
         });
 
         // enable kosher switch

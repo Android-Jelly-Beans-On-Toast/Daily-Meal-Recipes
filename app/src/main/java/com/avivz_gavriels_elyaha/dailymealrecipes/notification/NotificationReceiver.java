@@ -11,6 +11,6 @@ public class NotificationReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Log.d("NotificationReceiver", "received a notification");
         Intent recipeGenerationServiceIntent = new Intent(context, RecipeGenerationService.class);
-        context.startService(recipeGenerationServiceIntent);
+        context.startForegroundService(recipeGenerationServiceIntent);
     }
 }

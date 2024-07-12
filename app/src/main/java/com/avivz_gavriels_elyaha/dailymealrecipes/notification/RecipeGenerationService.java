@@ -1,5 +1,8 @@
 package com.avivz_gavriels_elyaha.dailymealrecipes.notification;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.Service;
 import android.content.ContentValues;
 import android.content.Context;
@@ -12,6 +15,7 @@ import android.provider.MediaStore;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
 
 import com.avivz_gavriels_elyaha.dailymealrecipes.R;
 import com.avivz_gavriels_elyaha.dailymealrecipes.database.DatabaseHelper;
@@ -25,6 +29,8 @@ import java.io.OutputStream;
 
 public class RecipeGenerationService extends Service {
 
+    private static final String CHANNEL_ID = "RecipeGenerationServiceChannel";
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -32,9 +38,41 @@ public class RecipeGenerationService extends Service {
     }
 
     @Override
+    public void onCreate() {
+        super.onCreate();
+        createNotificationChannel();
+    }
+
+    private void createNotificationChannel() {
+
+        NotificationChannel serviceChannel = new NotificationChannel(
+                CHANNEL_ID,
+                "Recipe Generation Service Channel",
+                NotificationManager.IMPORTANCE_DEFAULT
+        );
+
+        NotificationManager manager = getSystemService(NotificationManager.class);
+        if (manager != null) {
+            manager.createNotificationChannel(serviceChannel);
+        }
+
+    }
+
+    @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         // Perform the gemini prompt calculation in a background thread
         Log.d("RecipeGenerationService", "Starting recipe generation");
+        // Start the foreground service with a notification
+//        Intent notificationIntent = new Intent(this, MainActivity.class);
+//        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG);
+
+        Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setContentTitle("Recipe Generation Service")
+                .setContentText("Generating your daily recipe...")
+                .setSmallIcon(R.drawable.notification_icon)
+                .build();
+
+        startForeground(1, notification);
         new Thread(() -> {
             try {
                 GeminiUtils geminiUtils = GeminiUtilsFactory.createGeminiUtils(this);
@@ -76,8 +114,7 @@ public class RecipeGenerationService extends Service {
         }
 
         // send notification
-        NotificationScheduler notificationScheduler = new NotificationScheduler(this);
-        notificationScheduler.createNotification(title, message, recipe);
+        NotificationScheduler.createNotification(title, message, recipe, this);
     }
 
     private String saveImageToGallery(Bitmap bitmap, Context context, long id) {
