@@ -34,7 +34,7 @@ public class RecipeGenerationService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         // Perform the gemini prompt calculation in a background thread
-        Log.d("MyRecipeGenerationService", "Starting recipe generation");
+        Log.d("RecipeGenerationService", "Starting recipe generation");
         new Thread(() -> {
             try {
                 GeminiUtils geminiUtils = GeminiUtilsFactory.createGeminiUtils(this);
@@ -42,18 +42,18 @@ public class RecipeGenerationService extends Service {
                 geminiUtils.generateRecipeForNotification(new GeminiCallback() {
                     @Override
                     public void onSuccess(Recipe result, Bitmap image) {
-                        Log.d("MyRecipeGenerationService", "Recipe generation success");
+                        Log.d("RecipeGenerationService", "Recipe generation success");
                         sendNotification("Here's your recipe for today!", result.getTitle(), result, image);
                     }
 
                     @Override
                     public void onFailure(Throwable throwable) {
-                        Log.e("MyRecipeGenerationService", "Recipe generation failed", throwable);
+                        Log.e("RecipeGenerationService", "Recipe generation failed", throwable);
                         sendNotification("Recipe generation error", "Sorry, we couldn't generate a recipe for you today.", null, null);
                     }
                 });
             } catch (Exception e) {
-                Log.e("MyRecipeGenerationService", "Error performing calculation", e);
+                Log.e("RecipeGenerationService", "Error performing calculation", e);
             } finally {
                 stopSelf();
             }

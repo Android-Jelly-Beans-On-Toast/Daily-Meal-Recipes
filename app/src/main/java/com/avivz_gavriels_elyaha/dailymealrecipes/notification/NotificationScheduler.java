@@ -84,6 +84,10 @@ public class NotificationScheduler {
         if (manager != null) {
             manager.notify(NOTIFICATION_ID, builder.build());
         }
+
+        // update the notification scheduler
+        NotificationScheduler notificationScheduler = new NotificationScheduler(context);
+        notificationScheduler.updateNotificationScheduler();
     }
 
     public void scheduleDailyNotification() {
