@@ -1,9 +1,6 @@
 package com.avivz_gavriels_elyaha.dailymealrecipes.activities;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.app.TimePickerDialog;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,7 +11,6 @@ import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.avivz_gavriels_elyaha.dailymealrecipes.R;
-import com.avivz_gavriels_elyaha.dailymealrecipes.notification.RecipeGenerationService;
 import com.avivz_gavriels_elyaha.dailymealrecipes.notification.NotificationScheduler;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
@@ -45,10 +41,14 @@ public class SettingsActivity extends AppCompatActivity {
             editor.apply();
         });
 
-        // daily notification time button
+        // daily notification time
         Button timePicker = findViewById(R.id.timePicker);
         // set time picker text from shared preferences
         setTimePickerText(timePicker, sp.getInt("timerHour", 0), sp.getInt("timerMinute", 0));
+
+        // setup notification scheduler
+        NotificationScheduler notificationScheduler = new NotificationScheduler(this);
+        notificationScheduler.updateNotificationScheduler();
 
         timePicker.setOnClickListener(v -> {
             Log.d("at onClick", "my log");
@@ -59,10 +59,8 @@ public class SettingsActivity extends AppCompatActivity {
                 editor.apply();
                 setTimePickerText(timePicker, hourOfDay, minute);
 
-                // update alarm manager
-                if (sp.getBoolean("notification", false)) {
-                    setDailyAlarm();
-                }
+                // update notification manager
+                notificationScheduler.updateNotificationScheduler();
             }, 0, 0, true);
             clockPicker.show();
         });
@@ -80,11 +78,8 @@ public class SettingsActivity extends AppCompatActivity {
             // enable/disable notification time picker
             timePicker.setEnabled(state);
 
-            if (isChecked) {
-                setDailyAlarm();
-            } else {
-                cancelDailyAlarm();
-            }
+            // update notification scheduler
+            notificationScheduler.updateNotificationScheduler();
         });
 
         // enable kosher switch
@@ -116,20 +111,6 @@ public class SettingsActivity extends AppCompatActivity {
             editor.putBoolean("lowCalories", state);
             editor.apply();
         });
-    }
-
-    public void setDailyAlarm() {
-        NotificationScheduler.scheduleDailyNotification(this);
-    }
-
-    private void cancelDailyAlarm() {
-        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-        Intent intent = new Intent(this, RecipeGenerationService.class);
-        PendingIntent pendingIntent = PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        if (alarmManager != null) {
-            alarmManager.cancel(pendingIntent);
-        }
     }
 
     private void setTimePickerText(Button timePicker, int hourOfDay, int minute) {

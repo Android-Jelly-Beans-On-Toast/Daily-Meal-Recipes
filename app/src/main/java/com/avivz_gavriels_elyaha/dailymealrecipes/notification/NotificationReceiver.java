@@ -9,7 +9,7 @@ public class NotificationReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.d("NotificationReceiver", "lol");
+        Log.d("NotificationReceiver", "received a notification");
         Intent recipeGenerationServiceIntent = new Intent(context, RecipeGenerationService.class);
         context.startService(recipeGenerationServiceIntent);
     }

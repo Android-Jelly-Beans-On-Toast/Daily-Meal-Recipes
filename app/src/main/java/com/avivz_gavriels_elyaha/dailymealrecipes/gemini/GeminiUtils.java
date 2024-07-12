@@ -76,11 +76,21 @@ public class GeminiUtils {
 
     private String generatePromptForNotification() {
         SharedPreferences sp = context.getSharedPreferences("settings", Context.MODE_PRIVATE);
-        String hour = sp.getString("timerHour", "12");
-        String minute = sp.getString("timerMinute", "00");
+        int hour = sp.getInt("timerHour", 12);
+        int minute = sp.getInt("timerMinute", 0);
+        String options = "";
+        String kosher = this.context.getResources().getString(R.string.kosher);
+        String quick = this.context.getResources().getString(R.string.quick);
+        String lowCalories = this.context.getResources().getString(R.string.low_calories);
         String time = hour + ":" + minute;
         String geminiPrompt = this.context.getResources().getString(R.string.promptForGeminiNotification);
-        return String.format(geminiPrompt, time);
+        if (sp.getBoolean("kosher", false))
+            options += kosher + ", ";
+        if (sp.getBoolean("quick", false))
+            options += quick + " ";
+        if (sp.getBoolean("lowCalories", false))
+            options += lowCalories + " ";
+        return String.format(geminiPrompt, options, time);
     }
 
     public void generateRecipeFromImage(Bitmap image, GeminiCallback callback) {

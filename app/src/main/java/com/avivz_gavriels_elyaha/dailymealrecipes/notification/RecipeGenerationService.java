@@ -76,8 +76,8 @@ public class RecipeGenerationService extends Service {
         }
 
         // send notification
-        NotificationHelper notificationHelper = new NotificationHelper(this);
-        notificationHelper.createNotification(title, message, recipe);
+        NotificationScheduler notificationScheduler = new NotificationScheduler(this);
+        notificationScheduler.createNotification(title, message, recipe);
     }
 
     private String saveImageToGallery(Bitmap bitmap, Context context, long id) {
