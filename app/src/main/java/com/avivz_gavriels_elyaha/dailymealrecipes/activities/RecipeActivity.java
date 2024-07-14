@@ -16,8 +16,8 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.avivz_gavriels_elyaha.dailymealrecipes.R;
 import com.avivz_gavriels_elyaha.dailymealrecipes.NonScrollableListView;
+import com.avivz_gavriels_elyaha.dailymealrecipes.R;
 import com.avivz_gavriels_elyaha.dailymealrecipes.database.DatabaseHelper;
 import com.avivz_gavriels_elyaha.dailymealrecipes.database.Recipe;
 import com.avivz_gavriels_elyaha.dailymealrecipes.gemini.GeminiCallback;

@@ -109,10 +109,11 @@ public class GeminiUtils {
                 Log.d("GeminiResponse", "onSuccess!");
                 String resultText = result.getText();
                 if (resultText != null) {
+                    resultText = resultText.replace("```json", "").replace("```", "");
                     Log.d("GeminiResponse", resultText);
                     try {
                         // Parse the JSON response string
-                        JSONObject responseJson = new JSONObject(resultText.substring(8, resultText.length() - 4));
+                        JSONObject responseJson = new JSONObject(resultText);
 
                         searchImage(responseJson.getString("title"), new searchImageCallback() {
                             @Override
@@ -156,10 +157,11 @@ public class GeminiUtils {
                 Log.d("GeminiResponse", "onSuccess!");
                 String resultText = result.getText();
                 if (resultText != null) {
+                    resultText = resultText.replace("```json", "").replace("```", "");
                     Log.d("GeminiResponse", resultText);
                     try {
                         // Parse the JSON response string
-                        JSONObject responseJson = new JSONObject(resultText.substring(8, resultText.length() - 4));
+                        JSONObject responseJson = new JSONObject(resultText);
 
                         searchImage(responseJson.getString("title"), new searchImageCallback() {
                             @Override
