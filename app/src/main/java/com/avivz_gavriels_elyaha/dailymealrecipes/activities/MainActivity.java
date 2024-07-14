@@ -10,6 +10,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.provider.Settings;
@@ -95,15 +96,52 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.OnI
         NotificationScheduler.updateNotificationScheduler(this);
 
         ImageButton cameraButton = findViewById(R.id.buttonCamera);
-        // Check if the app has permission to access the camera
+
         if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.CAMERA}, 101);
         }
 
         // Launch the camera activity
         cameraButton.setOnClickListener(v -> {
-            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            activityResultLauncher.launch(intent);
+            // Check if the app has permission to access the camera
+            if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                activityResultLauncher.launch(intent);
+            } else {
+                // check if we should show an explanation to the user
+                if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, Manifest.permission.CAMERA)) {
+                    // show an explanation to the user
+                    new AlertDialog.Builder(MainActivity.this)
+                            .setTitle("Camera Permission Needed")
+                            .setMessage("This app needs the Camera permission to take photos. Please grant the permission.")
+                            .setPositiveButton("OK", (dialog, which) -> {
+                                // prompt the user once explanation has been shown
+                                ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.CAMERA}, 101);
+                            })
+                            .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+                            .create()
+                            .show();
+                } else {
+                    // No explanation needed, request the permission
+                    if (permissionDeniedForever()) {
+                        // Show a dialog directing the user to the app settings
+                        new AlertDialog.Builder(MainActivity.this)
+                                .setTitle("Permission Denied")
+                                .setMessage("You have denied the camera permission. Please go to settings and enable the permission.")
+                                .setPositiveButton("Go to Settings", (dialog, which) -> {
+                                    Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                                    Uri uri = Uri.fromParts("package", getPackageName(), null);
+                                    intent.setData(uri);
+                                    startActivity(intent);
+                                })
+                                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+                                .create()
+                                .show();
+                    } else {
+                        ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.CAMERA}, 101);
+                    }
+                }
+            }
         });
 
         // simulate a click on the SearchView when the the search bar image is clicked to open the search view
@@ -145,6 +183,11 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.OnI
         });
         // take care of horizontal scroll view
         updateRecyclerViews();
+    }
+
+    private boolean permissionDeniedForever() {
+        return !ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, Manifest.permission.CAMERA) &&
+                ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED;
     }
 
     @Override
