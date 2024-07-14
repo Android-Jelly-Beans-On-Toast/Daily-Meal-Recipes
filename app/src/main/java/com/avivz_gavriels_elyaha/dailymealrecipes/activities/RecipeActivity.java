@@ -159,7 +159,7 @@ public class RecipeActivity extends AppCompatActivity {
     }
 
     private String saveImageToGallery(Bitmap bitmap, Context context, long id) {
-        String imageFileName = "food_image_" + id + ".jpg";
+        String imageFileName = System.currentTimeMillis() + "_" + id + ".jpg";
         String appName = context.getResources().getString(R.string.app_name_no_spaces);
         File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/" + appName);
 
